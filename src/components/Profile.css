@@ -1,0 +1,175 @@
+.profile-container {
+  padding: 1.5rem;
+  background: #f4f7fb;
+  min-height: 100vh;
+  font-family: "Poppins", sans-serif;
+  padding-bottom: 5rem;
+}
+
+/* Header */
+.profile-header {
+  text-align: center;
+  background: white;
+  border-radius: 20px;
+  padding: 2rem 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+.avatar {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: #d9e3f0;
+  margin: 0 auto 1rem;
+}
+.username {
+  color: #2eb872;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+.phone {
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+.edit-btn {
+  color: #2eb872;
+  font-weight: 500;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* Cards */
+.card {
+  background: #fff;
+  border-radius: 20px;
+  margin-top: 1.5rem;
+  padding: 1rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+.card h3 {
+  font-weight: 600;
+  color: #2eb872;
+  margin-bottom: 1rem;
+}
+
+/* EV Display */
+.ev-display {
+  text-align: center;
+}
+.ev-img {
+  width: 200px;
+  margin: 0 auto;
+}
+.ev-model {
+  margin-top: 0.5rem;
+  font-weight: 500;
+  color: #2eb872;
+}
+
+/* Vehicle List */
+.vehicle-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.vehicle-item {
+  display: flex;
+  align-items: center;
+  background: #f8fafc;
+  padding: 0.8rem;
+  border-radius: 10px;
+}
+.vehicle-item .icon {
+  color: #2eb872;
+  margin-right: 0.8rem;
+}
+.vehicle-name {
+  font-weight: 500;
+  color: #2eb872;
+}
+.vehicle-id {
+  font-size: 0.8rem;
+  color: #666;
+}
+.add-vehicle-btn {
+  margin-top: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: center;
+  background: #2eb872;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 0.7rem;
+  cursor: pointer;
+}
+.add-vehicle-btn:hover {
+  background: #2eb872;
+}
+
+/* Wallet */
+.wallet-card {
+  background: linear-gradient(to right, #2eb872, #2eb);
+  color: white;
+  border-radius: 20px;
+  padding: 1rem 1.5rem;
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.wallet-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.wallet-balance {
+  font-weight: 600;
+}
+
+/* Menu */
+.menu-item {
+  display: flex;
+  align-items: center;
+  padding: 0.9rem;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.menu-item:hover {
+  background: #f5f8ff;
+}
+.menu-item .icon {
+  color: #666;
+  margin-right: 0.8rem;
+}
+
+/* Bottom Navigation */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  border-top: 1px solid #ddd;
+  display: flex;
+  justify-content: space-around;
+  padding: 0.6rem 0;
+  box-shadow: 0 -3px 10px rgba(0, 0, 0, 0.05);
+}
+.bottom-nav button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: none;
+  background: none;
+  color: #777;
+  font-size: 0.8rem;
+}
+.bottom-nav button i {
+  font-size: 1.3rem;
+}
+.bottom-nav .active {
+  color: #0066cc;
+}
