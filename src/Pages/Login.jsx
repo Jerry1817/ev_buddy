@@ -55,7 +55,7 @@ function Login() {
         </button>
 
         <p className="signup-text">
-          Don’t have an account? <a href="/register">Sign Up</a>
+          Don’t have an account? <a href="/UserRegister">Sign Up</a>
         </p>
       </div>
     </div>

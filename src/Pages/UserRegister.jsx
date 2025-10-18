@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "../components/UserRegister.css";
+import { useNavigate } from "react-router-dom";
 
 function UserRegister() {
   const [formData, setFormData] = useState({
@@ -9,6 +10,11 @@ function UserRegister() {
     password: "",
     evModel: "",
   });
+  const navigate = useNavigate()
+
+  const handleClick = ()=>{
+    navigate('/home')
+  }
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -66,7 +72,7 @@ function UserRegister() {
             <option value="MG ZS EV">MG ZS EV</option>
           </select>
 
-          <button type="submit" className="register-btn">
+          <button onClick={handleClick} type="submit" className="register-btn">
             Register
           </button>
         </form>

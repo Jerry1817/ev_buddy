@@ -1,0 +1,99 @@
+.home-container {
+  font-family: "Poppins", sans-serif;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: #f8fafc;
+}
+
+.search-bar {
+  padding: 12px;
+  background: white;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+.map-placeholder {
+  flex: 1;
+  background-color: #e9eef5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #777;
+  font-size: 15px;
+}
+
+.station-card {
+  background: white;
+  margin: 10px;
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+}
+
+.status-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.status.offline {
+  color: red;
+  font-weight: 500;
+}
+
+.type {
+  color: #007bff;
+}
+
+.details-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-size: 14px;
+}
+
+.request-btn {
+  width: 100%;
+  background: #2eb872;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  margin-top: 10px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.request-btn:hover {
+  background: #25a060;
+}
+
+.bottom-nav {
+  display: flex;
+  justify-content: space-around;
+  background: white;
+  padding: 10px 0;
+  border-top: 1px solid #ddd;
+}
+
+.nav-btn {
+  background: none;
+  border: none;
+  font-size: 14px;
+  color: #555;
+}
+
+.nav-btn.active {
+  color: #2eb872;
+  font-weight: 600;
+}
