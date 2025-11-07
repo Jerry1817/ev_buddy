@@ -1,114 +1,77 @@
+// src/pages/Profile.jsx
 import React from "react";
-import {
-  Wallet,
-  Users,
-  Headphones,
-  Shield,
-  MessageSquare,
-  PlusCircle,
-  Car,
-} from "lucide-react";
+import "./../components/Profile.css";
 
-const Profile = () => {
+export default function Profile() {
   return (
-    <div className="profile-container">
-      {/* Profile Header */}
-      <div className="profile-header">
-        <div className="avatar"></div>
-        <h2 className="username">User Name</h2>
-        <p className="phone">+91-XXXXXXXXXX</p>
-        <button className="edit-btn">Edit Profile →</button>
-      </div>
-
-      {/* My EVs Section */}
-      <div className="card">
-        <h3>My EVs</h3>
-        <div className="ev-display">
+    <div className="profile-page">
+      {/* Header Section */}
+      <header className="profile-header">
+        <div className="profile-info">
           <img
-            src="https://i.ibb.co/7RSbct2/bmw-i4.png"
-            alt="EV"
-            className="ev-img"
+            src="https://via.placeholder.com/60"
+            alt="user"
+            className="profile-pic"
           />
-          <p className="ev-model">BMW • i4</p>
-        </div>
-      </div>
-
-      {/* EV Vehicles Section */}
-      <div className="card">
-        <h3>My EV Vehicles</h3>
-        <div className="vehicle-list">
-          <div className="vehicle-item">
-            <Car className="icon" />
-            <div>
-              <p className="vehicle-name">Tata Nexon EV</p>
-              <p className="vehicle-id">ID: EV1234</p>
-            </div>
+          <div>
+            <h2 className="profile-name">Muhammed Hashim. K</h2>
+            <p className="profile-phone">+91-8136991817</p>
+            <a href="#edit" className="edit-link">Edit Profile ➜</a>
           </div>
-
-          <div className="vehicle-item">
-            <Car className="icon" />
-            <div>
-              <p className="vehicle-name">MG ZS EV</p>
-              <p className="vehicle-id">ID: EV5678</p>
-            </div>
-          </div>
-
-          <button className="add-vehicle-btn">
-            <PlusCircle className="icon" /> Add Vehicle
-          </button>
         </div>
-      </div>
+        <div className="profile-illustration">
+          <img
+            src="https://cdn-icons-png.flaticon.com/512/1000/1000913.png"
+            alt="ev illustration"
+          />
+        </div>
+      </header>
+
+      {/* My EV Section */}
+      <section className="my-evs">
+        <h3 className="section-title">My EVs</h3>
+        <div className="ev-card">
+          <img
+            src="https://cdn.pixabay.com/photo/2021/05/20/12/23/electric-scooter-6267250_1280.png"
+            alt="Ather 450 Apex"
+            className="ev-image"
+          />
+          <p className="ev-name">ATHER • 450 Apex</p>
+        </div>
+      </section>
 
       {/* Wallet Section */}
-      <div className="wallet-card">
-        <div className="wallet-info">
-          <Wallet className="icon" />
-          <p>My Wallet</p>
+      <section className="wallet-section">
+        <div className="wallet-card">
+          <div className="wallet-left">
+            <span className="wallet-icon">💳</span>
+            <span>My Wallet</span>
+          </div>
+          <div className="wallet-right">
+            <span>₹0.00</span>
+            <span className="arrow">›</span>
+          </div>
         </div>
-        <p className="wallet-balance">₹0.00</p>
+      </section>
+
+      {/* General Options */}
+      <section className="general-section">
+        <h3 className="section-title">General</h3>
+        <ul className="options-list">
+          <li><span>👥</span> Invite your friends</li>
+          <li><span>🛠️</span> Help and Support</li>
+          <li><span>🔒</span> Privacy Policy</li>
+          <li><span>💡</span> Feature Request</li>
+        </ul>
+      </section>
+
+      {/* Logout Button */}
+      <div className="logout-container">
+        <button className="logout-btn">⎋ Logout</button>
       </div>
 
-      {/* General Section */}
-      <div className="card">
-        <div className="menu-item">
-          <Users className="icon" />
-          <p>Invite your friends</p>
-        </div>
-        <div className="menu-item">
-          <Headphones className="icon" />
-          <p>Help and Support</p>
-        </div>
-        <div className="menu-item">
-          <Shield className="icon" />
-          <p>Privacy Policy</p>
-        </div>
-        <div className="menu-item">
-          <MessageSquare className="icon" />
-          <p>Feature Request</p>
-        </div>
-      </div>
-
-      {/* Bottom Navigation */}
-      <div className="bottom-nav">
-        <button>
-          <i className="ri-flashlight-line"></i>
-          <span>Chargers</span>
-        </button>
-        <button>
-          <i className="ri-map-pin-line"></i>
-          <span>Trip</span>
-        </button>
-        <button>
-          <i className="ri-bar-chart-2-line"></i>
-          <span>Activity</span>
-        </button>
-        <button className="active">
-          <i className="ri-user-line"></i>
-          <span>Profile</span>
-        </button>
-      </div>
+     
+  
     </div>
   );
-};
-
-export default Profile;
+}

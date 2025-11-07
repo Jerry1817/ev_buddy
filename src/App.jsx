@@ -8,6 +8,7 @@ import Home from './Pages/Home'
 import Activity from './Pages/Activity'
 import HostRegister from './Pages/HostRegister'
 import Profile from './Pages/Profile'
+import HostChargingSetup from './Pages/HostChargingSetup'
 
 function App() {
   return (
@@ -21,6 +22,8 @@ function App() {
         <Route path="/activity" element={<Activity />} />
         <Route path="/hostregister" element={<HostRegister />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/HostCharging" element={<HostChargingSetup/>} />
+
       </Routes>
     </>
   )
