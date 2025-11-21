@@ -1,14 +1,20 @@
 import { Route, Routes } from 'react-router-dom'
 import './App.css'
+
 import Login from './Pages/Login'
 import Register from './Pages/Register'
 import UserRegister from './Pages/UserRegister'
-import Host1 from './Pages/host1'
 import Home from './Pages/Home'
 import Activity from './Pages/Activity'
 import HostRegister from './Pages/HostRegister'
 import Profile from './Pages/Profile'
 import HostChargingSetup from './Pages/HostChargingSetup'
+import HelpSupport from './Pages/Help'
+import PrivacyPolicy from './Pages/Privacy'
+import InviteFriends from './Pages/Invite'
+import { Edit } from 'lucide-react'
+
+
 
 function App() {
   return (
@@ -23,7 +29,10 @@ function App() {
         <Route path="/hostregister" element={<HostRegister />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/HostCharging" element={<HostChargingSetup/>} />
-
+        <Route path="/Help" element={<HelpSupport/>} />
+        <Route path="/Privacy" element={<PrivacyPolicy/>} />
+        <Route path="/Invite" element={<InviteFriends/>} />
+        <Route path="/Edit" element={<Edit/>} />
       </Routes>
     </>
   )

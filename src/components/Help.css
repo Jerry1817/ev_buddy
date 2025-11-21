@@ -1,0 +1,90 @@
+.help-support-modal {
+  background-color: #f9fafb;
+  border-radius: 20px;
+  padding: 24px;
+  text-align: center;
+  font-family: 'Inter', sans-serif;
+  color: #1a1a1a;
+  max-width: 400px;
+  margin: 0 auto;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.help-support-modal h2 {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.support-options {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 20px;
+  gap: 12px;
+}
+
+.support-option {
+  background-color: #f9fff9;
+  border: 1.5px solid #0fe104;
+  border-radius: 16px;
+  width: 110px;
+  height: 110px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.support-option:hover {
+  background-color: #fdfdfd;
+  transform: scale(1.05);
+}
+
+.support-option i {
+  font-size: 28px;
+  color: #004d4d;
+  margin-bottom: 8px;
+}
+
+.support-option span {
+  font-size: 0.95rem;
+  color: #004d4d;
+  font-weight: 500;
+}
+
+.support-info {
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin-top: 10px;
+}
+
+.support-info strong {
+  color: #004d4d;
+  font-weight: 600;
+}
+
+.support-hours {
+  color: #0077ff;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.dismiss-btn {
+  background-color: transparent;
+  border: 1.5px solid #13b005;
+  border-radius: 40px;
+  padding: 10px 50px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #004d4d;
+  cursor: pointer;
+  margin-top: 25px;
+  transition: all 0.3s ease;
+}
+
+.dismiss-btn:hover {
+  background-color: #13b005;
+  color: rgb(244, 238, 238);
+}
