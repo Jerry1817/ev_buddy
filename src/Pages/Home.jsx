@@ -60,7 +60,7 @@ function Home() {
           <IoHomeOutline size={12} />
           <span></span>
         </button>
-        <button className="nav-btn" onClick={() => navigate("/activity")}>
+        <button className="nav-btn" onClick={() => navigate("/hostaccepted")}>
           <IoListOutline size={12} />
           <span></span>
         </button>
