@@ -17,7 +17,7 @@ export default function Profile() {
           <div>
             <h2 className="profile-name">Muhammed Hashim. K</h2>
             <p className="profile-phone">+91-8136991817</p>
-            <a href="#edit" className="edit-link">Edit Profile ➜</a>
+            <a href="Edit" className="edit-link">Edit Profile ➜</a>
           </div>
         </div>
         <div className="profile-illustration">
@@ -56,15 +56,26 @@ export default function Profile() {
       </section>
 
       {/* General Options */}
-      <section className="general-section">
-        <h3 className="section-title">General</h3>
-        <ul className="options-list">
-          <li><span>👥</span> Invite your friends</li>
-          <li><span>🛠️</span> Help and Support</li>
-          <li><span>🔒</span> Privacy Policy</li>
-          <li><span>💡</span> Feature Request</li>
-        </ul>
-      </section>
+   <section className="general-section">
+  <h3 className="section-title">General</h3>
+  <ul className="options-list">
+    <li>
+      <a href="/invite">
+        <span>👥</span> Invite your Friends
+      </a>
+    </li>
+    <li>
+      <a href="/help">
+        <span>🛠️</span> Help and Support
+      </a>
+    </li>
+    <li>
+      <a href="/privacy">
+        <span>🔒</span> Privacy Policy
+      </a>
+    </li>
+  </ul>
+</section>
 
       {/* Logout Button */}
       <div className="logout-container">

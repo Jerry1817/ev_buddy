@@ -1,0 +1,45 @@
+/* charging.css */
+:root{
+  --bg:#fff;
+  --accent:#ef4444;
+  --muted:#6b7280;
+  font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial;
+}
+
+.charge-container{
+  min-height:100vh;
+  background:#fff;
+  padding:24px;
+  box-sizing:border-box;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+
+.charge-back{ align-self:flex-start; background:transparent; border:none; font-size:22px; cursor:pointer; margin-bottom:6px; }
+
+.charge-title{ font-size:20px; font-weight:800; margin-top:6px; color:#111; }
+
+.charge-timer{
+  font-family:monospace;
+  font-size:48px;
+  font-weight:900;
+  margin:28px 0;
+  color:#111;
+}
+
+.charge-stop{
+  padding:14px 20px;
+  background:#fff;
+  border:1.6px solid #f3c3c3;
+  color:var(--accent);
+  border-radius:12px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+/* bottom nav */
+.bottom-nav{
+  position:fixed; left:0; right:0; bottom:12px; display:flex; justify-content:center; gap:16px;
+}
+.bottom-nav button{ width:56px; height:44px; border-radius:12px; border:none; background:#fff; box-shadow:0 6px 12px rgba(0,0,0,0.06); }
