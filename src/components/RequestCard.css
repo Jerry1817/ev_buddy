@@ -1,0 +1,29 @@
+.request-card {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:12px;
+  background:#fff;
+  border-radius:10px;
+  box-shadow:0 6px 18px rgba(0,0,0,0.06);
+  margin-bottom:12px;
+  cursor:pointer;
+}
+.request-left .guest-name { font-weight:600; font-size:16px; }
+.req-kwh, .eta { color:#6b7280; font-size:13px; }
+.request-actions button { margin-left:8px; padding:8px 12px; border-radius:8px; border:0; cursor:pointer; }
+.accept-btn { background:#10b981; color:#fff; }
+.reject-btn { background:#fff; border:1px solid #e5e7eb; color:#111; }
+
+/* Modal */
+.modal-backdrop {
+  position:fixed; inset:0; background:rgba(0,0,0,0.35);
+  display:flex; align-items:center; justify-content:center; z-index:2000;
+}
+.modal {
+  width:320px; max-width:90%; background:#fff; border-radius:12px; padding:18px; box-shadow:0 12px 40px rgba(2,6,23,0.2);
+}
+.modal h3 { margin-top:0; font-size:18px; }
+.modal-row { margin:8px 0; color:#0f172a; }
+.modal-actions { display:flex; gap:8px; justify-content:flex-end; margin-top:12px; }
+.btn-secondary { background:#f3f4f6; border:1px solid #e5e7eb; padding:8px 10px; border-radius:8px; }

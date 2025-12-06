@@ -97,3 +97,9 @@
   color: #2eb872;
   font-weight: 600;
 }
+.home-container,
+.activity-container,
+.profile-container {
+  padding-top: 65px; /* navbar space */
+  padding-bottom: 65px; /* bottom nav space */
+}

@@ -1,6 +1,7 @@
 // src/pages/Profile.jsx
 import React from "react";
 import "./../components/Profile.css";
+import "../components/Home.css";
 
 export default function Profile() {
   return (
