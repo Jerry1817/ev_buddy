@@ -1,0 +1,67 @@
+/* navigation.css */
+:root{
+  --bg:#f7fafc;
+  --card-bg:#eef6fb;
+  --white:#fff;
+  --green:#2fb36d;
+  --muted:#6b7280;
+  --shadow:0 6px 18px rgba(20,30,40,0.06);
+  font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial;
+}
+
+.nav-container{
+  min-height:100vh;
+  background:var(--bg);
+  padding:18px;
+  box-sizing:border-box;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+
+.nav-back{
+  align-self:flex-start;
+  background:transparent;border:none;font-size:22px;cursor:pointer;margin-bottom:6px;
+}
+
+.nav-title-top{ font-size:20px; font-weight:700; margin:0 0 12px 0; color:#111; }
+
+.nav-card{
+  width:100%;
+  max-width:420px;
+  background:var(--card-bg);
+  border-radius:18px;
+  padding:16px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.nav-host{ font-weight:800; font-size:18px; color:#111; margin:6px 0; }
+.nav-address{ color:#475569; font-size:14px; line-height:1.4; }
+
+.nav-meta{ display:flex; gap:8px; align-items:center; color:var(--muted); font-weight:700; margin-top:6px; }
+
+.nav-btn{
+  margin-top:20px;
+  width:100%;
+  max-width:420px;
+  padding:14px;
+  background:var(--green);
+  color:#fff;
+  border:none;
+  border-radius:14px;
+  font-weight:800;
+  font-size:16px;
+  cursor:pointer;
+  box-shadow:0 8px 18px rgba(47,179,109,0.12);
+}
+
+/* bottom nav */
+.bottom-nav{
+  position:fixed; left:0; right:0; bottom:12px;
+  display:flex; justify-content:center; gap:16px;
+}
+.bottom-nav button{
+  width:56px; height:44px; border-radius:12px; border:none; background:#fff; box-shadow:0 6px 12px rgba(0,0,0,0.06);
+}

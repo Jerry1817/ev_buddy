@@ -16,7 +16,7 @@ export default function Profile() {
           <div>
             <h2 className="profile-name">Muhammed Hashim. K</h2>
             <p className="profile-phone">+91-8136991817</p>
-            <a href="#edit" className="edit-link">Edit Profile ➜</a>
+            <a href="Edit" className="edit-link">Edit Profile ➜</a>
           </div>
         </div>
         <div className="profile-illustration">
