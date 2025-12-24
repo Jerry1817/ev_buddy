@@ -12,7 +12,7 @@ const initial = [
   {
     id: "r1",
     name: "Justin Clark",
-    model: "Nissan Leaf",
+    model: "Nissan Leaf", 
     distance: "1.2 mi",
     eta: "5 min",
     phone: "+1 987 654 3210",

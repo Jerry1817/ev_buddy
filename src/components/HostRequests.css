@@ -1,14 +1,11 @@
-/* HostRequests.css - mobile-first styles inspired by the mockup */
 
-/* page */
 .host-requests-page {
   font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
   background: linear-gradient(180deg, #f7fafc 0%, #ffffff 100%);
   min-height: 100vh;
-  padding-bottom: 120px; /* leave room for bottom nav if any */
+  padding-bottom: 120px; 
 }
 
-/* header */
 .hr-header {
   height: 72px;
   display:flex;
@@ -28,7 +25,6 @@
 }
 .hr-spacer { width:40px }
 
-/* search */
 .hr-search { padding: 12px 16px; }
 .hr-search input {
   width:100%;
@@ -40,10 +36,8 @@
   font-size: 14px;
 }
 
-/* list */
 .hr-list { padding: 8px 12px 200px; display:flex; flex-direction:column; gap:12px; }
 
-/* card */
 .req-card {
   background: #fff;
   border-radius: 14px;
@@ -63,13 +57,11 @@
 }
 .avatar.large { width:64px; height:64px; font-size:28px; }
 
-/* body */
 .req-body { flex:1; display:flex; flex-direction:column; gap:8px; }
 .req-top { display:flex; justify-content:space-between; align-items:flex-start; gap:8px; }
 .req-name { font-weight:700; font-size:16px; color:#0f172a; }
 .req-sub { font-size:14px; color:#64748b; margin-top:4px; }
 
-/* badge */
 .req-badge {
   padding:6px 10px; border-radius:12px; font-weight:600; font-size:12px;
 }
@@ -77,12 +69,10 @@
 .badge-accepted { background:#ecfdf5; color:#065f46; border:1px solid #bbf7d0; }
 .badge-rejected { background:#fff1f2; color:#9f1239; border:1px solid #fecdd3; }
 
-/* meta & actions */
 .req-meta { display:flex; justify-content:space-between; align-items:center; gap:8px; }
 .distance { color:#94a3b8; font-size:13px; }
 .actions { display:flex; gap:8px; align-items:center; }
 
-/* buttons */
 .btn-primary {
   background:#10b981; color:white; border:0; padding:8px 12px; border-radius:10px; cursor:pointer; font-weight:700;
 }
@@ -91,7 +81,6 @@
 }
 .btn-secondary { background:#f3f4f6; border:0; padding:8px 12px; border-radius:10px; cursor:pointer; }
 
-/* modal */
 .modal-backdrop { position:fixed; inset:0; background: rgba(2,6,23,0.45); display:flex; align-items:center; justify-content:center; z-index:50; }
 .modal {
   width: 92%;
@@ -105,10 +94,8 @@
 .modal-body { margin-top:12px; color:#0f172a; }
 .modal-actions { display:flex; gap:8px; justify-content:flex-end; margin-top:14px; }
 
-/* empty */
 .empty { text-align:center; color:#94a3b8; margin-top:30px; }
 
-/* responsive tweak */
 @media (min-width:720px) {
   .hr-list { max-width:720px; margin: 0 auto; }
 }

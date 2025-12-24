@@ -1,5 +1,4 @@
-/* Basic layout */
-.login-page {
+/* .login-page {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -17,7 +16,6 @@
   text-align: center;
 }
 
-/* Logo section */
 .logo-section .logo {
   width: 60px;
   margin-bottom: 10px;
@@ -34,14 +32,12 @@
   font-size: 14px;
 }
 
-/* Welcome text */
 .welcome-text {
   font-size: 20px;
   margin: 20px 0;
   color: #1b2e4b;
 }
 
-/* Inputs */
 .input-box {
   display: flex;
   align-items: center;
@@ -64,7 +60,6 @@
   font-size: 14px;
 }
 
-/* Options */
 .options {
   display: flex;
   justify-content: space-between;
@@ -78,7 +73,6 @@
   text-decoration: none;
 }
 
-/* Login button */
 .login-btn {
   width: 100%;
   background-color: #2eb872;
@@ -95,7 +89,6 @@
   background-color: #26a866;
 }
 
-/* Signup text */
 .signup-text {
   font-size: 14px;
   margin-top: 15px;
@@ -107,7 +100,6 @@
   text-decoration: none;
 }
 
-/* Social buttons */
 .social-login {
   display: flex;
   justify-content: center;
@@ -217,4 +209,4 @@ input {
 
 .login-btn:hover {
   background-color: #218838;
-}
+} */

@@ -1,7 +1,7 @@
-:root {
-  --green-primary: #2ecc71;       /* Main green */
-  --green-dark: #27ae60;          /* Darker shade for hover or accents */
-  --green-light: #e8f9f0;         /* Soft background tint */
+/* :root {
+  --green-primary: #2ecc71;      
+  --green-dark: #27ae60;          
+  --green-light: #e8f9f0;        
   --text-dark: #1b1b1b;
   --text-muted: #5f5f5f;
   --surface: #ffffff;
@@ -12,7 +12,6 @@
   font-family: "Inter", "Poppins", sans-serif;
 }
 
-/* ---------- PAGE CONTAINER ---------- */
 .profile-page {
   background: var(--green-light);
   min-height: 90vh;
@@ -20,7 +19,6 @@
   color: var(--text-dark);
 }
 
-/* ---------- HEADER SECTION ---------- */
 .profile-header {
   display: flex;
   justify-content: space-between;
@@ -80,7 +78,6 @@
   opacity: 0.95;
 }
 
-/* ---------- SECTION TITLES ---------- */
 .section-title {
   font-size: 16px;
   font-weight: 700;
@@ -88,7 +85,6 @@
   margin-bottom: 10px;
 }
 
-/* ---------- MY EV SECTION ---------- */
 .my-evs {
   margin-bottom: 20px;
 }
@@ -122,7 +118,6 @@
   color: var(--text-dark);
 }
 
-/* ---------- WALLET SECTION ---------- */
 .wallet-section {
   margin-bottom: 20px;
 }
@@ -171,7 +166,6 @@
   color: var(--green-dark);
 }
 
-/* ---------- GENERAL SECTION ---------- */
 .general-section {
   margin-bottom: 24px;
 }
@@ -208,7 +202,6 @@
   font-size: 18px;
 }
 
-/* ---------- LOGOUT BUTTON ---------- */
 .logout-container {
   display: flex;
   justify-content: center;
@@ -232,7 +225,6 @@
   transform: scale(1.03);
 }
 
-/* ---------- RESPONSIVE ---------- */
 @media (max-width: 768px) {
   .profile-header {
     flex-direction: column;
@@ -248,4 +240,4 @@
   .wallet-card {
     width: 100%;
   }
-}
+} */

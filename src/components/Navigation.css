@@ -1,4 +1,4 @@
-/* navigation.css */
+/* navigation.css
 :root{
   --bg:#f7fafc;
   --card-bg:#eef6fb;
@@ -57,11 +57,11 @@
   box-shadow:0 8px 18px rgba(47,179,109,0.12);
 }
 
-/* bottom nav */
+
 .bottom-nav{
   position:fixed; left:0; right:0; bottom:12px;
   display:flex; justify-content:center; gap:16px;
 }
 .bottom-nav button{
   width:56px; height:44px; border-radius:12px; border:none; background:#fff; box-shadow:0 6px 12px rgba(0,0,0,0.06);
-}
+} */

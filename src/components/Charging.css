@@ -1,4 +1,4 @@
-/* charging.css */
+/* charging.css
 :root{
   --bg:#fff;
   --accent:#ef4444;
@@ -38,8 +38,7 @@
   cursor:pointer;
 }
 
-/* bottom nav */
 .bottom-nav{
   position:fixed; left:0; right:0; bottom:12px; display:flex; justify-content:center; gap:16px;
 }
-.bottom-nav button{ width:56px; height:44px; border-radius:12px; border:none; background:#fff; box-shadow:0 6px 12px rgba(0,0,0,0.06); }
+.bottom-nav button{ width:56px; height:44px; border-radius:12px; border:none; background:#fff; box-shadow:0 6px 12px rgba(0,0,0,0.06); } */

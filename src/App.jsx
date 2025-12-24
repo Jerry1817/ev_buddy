@@ -18,6 +18,7 @@ import Edit from './Pages/Edit'
 import Navigation from './Pages/Navigation'
 import Charging from './Pages/Charging'
 import Payment from './Pages/Payment'
+import AdminHome from './Adimin/Pages/Home'
 
 function App() {
   return (
@@ -35,7 +36,7 @@ function App() {
 
         {/* Host Related */}
         <Route path="/hostcharging" element={<HostChargingSetup />} />
-        <Route path="/hostrequest" element={<HostRequests />} />
+        <Route path="/hostrequests" element={<HostRequests />} />
         <Route path="/hostaccepted" element={<HostAccepted />} />
 
         {/* Additional Pages */}
@@ -46,6 +47,9 @@ function App() {
         <Route path="/navigation" element={<Navigation />} />
         <Route path="/charging" element={<Charging />} />
         <Route path="/payment" element={<Payment />} />
+
+        {/* adminpath */}
+        <Route path="/admin/dashboard" element={<AdminHome />} />
       </Routes>
     </>
   )

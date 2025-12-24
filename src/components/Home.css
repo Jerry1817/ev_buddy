@@ -1,4 +1,4 @@
-.home-container {
+/* .home-container {
   font-family: "Poppins", sans-serif;
   height: 100vh;
   display: flex;
@@ -100,6 +100,6 @@
 .home-container,
 .activity-container,
 .profile-container {
-  padding-top: 65px; /* navbar space */
-  padding-bottom: 65px; /* bottom nav space */
-}
+  padding-top: 65px; 
+  padding-bottom: 65px;
+} */

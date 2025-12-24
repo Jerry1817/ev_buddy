@@ -80,7 +80,7 @@ const HostChargingSetup = () => {
       {/* ✅ Confirm Request Button */}
       <div className="confirm-section">
         <button className="confirm-btn" onClick={handleConfirm}>
-          Confirm Request
+          Confirm send  Request
         </button>
       </div>
     </div>

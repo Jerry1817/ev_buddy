@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import "../components/Login.css";  
 import { FaEnvelope, FaLock, FaPhone } from "react-icons/fa";
-import logo from "../assets/logo.jpg";  // ✅ make sure logo.jpg is inside src/assets/
+import logo from "../assets/logo.jpg";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -13,49 +12,81 @@ function Login() {
   };
 
   return (
-    <div className="login-container">
-      {/* ✅ Logo Section */}
-      <div className="logo-section">
-        <img src={logo} alt="EV Buddy Logo" className="logo" />
-        <h2>EV Buddy</h2>
-        <p>Your next charge is just a click away ⚡</p>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-white font-[Poppins,sans-serif] px-4">
+      {/* Logo Section */}
+      <div className="text-center mb-6">
+        <img
+          src={logo}
+          alt="EV Buddy Logo"
+          className="w-20 h-20 rounded-full mx-auto object-cover"
+        />
+        <h2 className="mt-3 mb-1 text-xl font-semibold text-[#003366]">
+          EV Buddy
+        </h2>
+        <p className="text-sm text-gray-500">
+          Your next charge is just a click away ⚡
+        </p>
       </div>
 
-      {/* ✅ Login Form Section */}
-      <div className="login-form">
-        <h3 className="welcome-text">Welcome Back!</h3>
+      {/* Card / Form */}
+      <div className="bg-[#f9f9f9] px-6 py-6 rounded-xl shadow-md w-full max-w-xs">
+        <h3 className="text-lg font-semibold text-[#1b2e4b] text-center mb-5">
+          Welcome Back!
+        </h3>
 
-        <div className="input-group">
-          <FaEnvelope className="icon" />
-          <input
-            type="email"
-            placeholder="Enter your Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
+        <form onSubmit={handleLogin} className="space-y-3">
+          {/* Email */}
+          <div className="flex items-center border border-gray-300 rounded-md px-3 py-2 bg-white">
+            <FaEnvelope className="text-gray-600 mr-2" />
+            <input
+              type="email"
+              placeholder="Enter your Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full bg-transparent outline-none text-sm"
+            />
+          </div>
 
-        <div className="input-group">
-          <FaLock className="icon" />
-          <input
-            type="password"
-            placeholder="Enter your Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
+          {/* Password */}
+          <div className="flex items-center border border-gray-300 rounded-md px-3 py-2 bg-white">
+            <FaLock className="text-gray-600 mr-2" />
+            <input
+              type="password"
+              placeholder="Enter your Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full bg-transparent outline-none text-sm"
+            />
+          </div>
 
-        <div className="input-group">
-          <FaPhone className="icon" />
-          <input type="text" placeholder="Enter your Mobile Number" />
-        </div>
+          {/* Phone */}
+          <div className="flex items-center border border-gray-300 rounded-md px-3 py-2 bg-white">
+            <FaPhone className="text-gray-600 mr-2" />
+            <input
+              type="text"
+              placeholder="Enter your Mobile Number"
+              className="w-full bg-transparent outline-none text-sm"
+            />
+          </div>
 
-        <button  className="login-btn" onClick={handleLogin}>
-          Login
-        </button>
+          {/* Login Button */}
+          <button
+            type="submit"
+            className="w-full mt-2 py-2.5 bg-emerald-600 text-white font-bold rounded-md cursor-pointer transition hover:bg-emerald-700 active:scale-[0.98]"
+          >
+            Login
+          </button>
+        </form>
 
-        <p className="signup-text">
-          Don’t have an account? <a href="/UserRegister">Sign Up</a>
+        {/* Signup text */}
+        <p className="text-sm text-center mt-4">
+          Don’t have an account?{" "}
+          <a
+            href="/UserRegister"
+            className="text-emerald-600 font-medium hover:underline"
+          >
+            Sign Up
+          </a>
         </p>
       </div>
     </div>
