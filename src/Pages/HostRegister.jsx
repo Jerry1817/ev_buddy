@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import "./HostRegister.css";
+import "../components/HostRegister.css";
+import MapPicker from "../components/MapPicker";
 
 function HostRegister() {
   const navigate = useNavigate();
@@ -16,8 +17,12 @@ function HostRegister() {
     power: "",
     rate: "",
     address: "",
-    latitude: "",
-    longitude: "",
+  });
+
+  // 📍 LOCATION STATE (IMPORTANT)
+  const [location, setLocation] = useState({
+    lat: null,
+    lng: null,
   });
 
   const handleChange = (e) => {
@@ -27,21 +32,29 @@ function HostRegister() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    try {
-      /* -------------------------------
-         STEP 1: REGISTER HOST (AUTH)
-      -------------------------------- */
-      await axios.post("http://localhost:5000/api/auth/register", {
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        password: formData.password,
-        role: "host",
-      });
+    // 🚨 Location validation
+    if (!location.lat || !location.lng) {
+      alert("Please pick station location from map 📍");
+      return;
+    }
 
-      /* -------------------------------
+    try {
+      /* =========================
+         STEP 1: REGISTER HOST
+      ========================== */
+      // STEP 3: REGISTER HOST
+await axios.post("http://localhost:5000/api/auth/register", {
+  name: formData.name,
+  email: formData.email,
+  phone: formData.phone,
+  password: formData.password,
+  role: "host",
+});
+
+
+      /* =========================
          STEP 2: LOGIN HOST
-      -------------------------------- */
+      ========================== */
       const loginRes = await axios.post(
         "http://localhost:5000/api/auth/login",
         {
@@ -54,9 +67,9 @@ function HostRegister() {
       localStorage.setItem("token", token);
       localStorage.setItem("role", "host");
 
-      /* -------------------------------
+      /* =========================
          STEP 3: REGISTER STATION
-      -------------------------------- */
+      ========================== */
       await axios.post(
         "http://localhost:5000/api/host/register",
         {
@@ -65,9 +78,11 @@ function HostRegister() {
           power: formData.power,
           rate: formData.rate,
           address: formData.address,
+
+          // 📍 LOCATION SENT TO DB
           location: {
-            latitude: formData.latitude,
-            longitude: formData.longitude,
+            lat: location.lat,
+            lng: location.lng,
           },
         },
         {
@@ -167,24 +182,23 @@ function HostRegister() {
             />
           </div>
 
-          {/* 📍 MAP LOCATION */}
-          <div className="inline-inputs">
-            <input
-              type="text"
-              name="latitude"
-              placeholder="Latitude"
-              onChange={handleChange}
-              required
-            />
+          {/* =========================
+              📍 MAP PICKER SECTION
+          ========================== */}
+          <h4 style={{ marginTop: "15px" }}>📍 Pick Station Location</h4>
 
-            <input
-              type="text"
-              name="longitude"
-              placeholder="Longitude"
-              onChange={handleChange}
-              required
-            />
-          </div>
+          <MapPicker
+            setLocation={(loc) =>
+              setLocation({ lat: loc.lat, lng: loc.lng })
+            }
+          />
+
+          {location.lat && (
+            <p className="location-text">
+              Selected: {location.lat.toFixed(5)},{" "}
+              {location.lng.toFixed(5)}
+            </p>
+          )}
 
           <button className="register-btn" type="submit">
             Register Station

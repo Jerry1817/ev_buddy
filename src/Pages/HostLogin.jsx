@@ -18,22 +18,33 @@ function HostLogin() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
-      setLoading(true);
-
+      // 🔐 LOGIN (COMMON AUTH API)
       const res = await axios.post(
-        "http://localhost:5000/api/host/login",
-        formData
+        "http://localhost:5000/api/auth/login",
+        {
+          email: formData.email,
+          password: formData.password,
+        }
       );
 
-      // ✅ SAVE TOKEN & ROLE
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("role", "host");
+      const { token, role } = res.data;
 
-      alert("Host login successful 🚗⚡");
+      // ❌ Not a host
+      if (role !== "host") {
+        alert("This account is not registered as a host");
+        setLoading(false);
+        return;
+      }
 
-      // 👉 Go to host requests page
+      // ✅ SAVE TOKEN
+      localStorage.setItem("token", token);
+      localStorage.setItem("role", role);
+
+      alert("Host login successful ⚡🏠");
+
       navigate("/hostrequests");
     } catch (error) {
       console.error(error);
@@ -83,7 +94,6 @@ function HostLogin() {
           </button>
         </form>
 
-        {/* Register link */}
         <p className="text-sm text-center mt-4">
           Don’t have a host account?{" "}
           <span

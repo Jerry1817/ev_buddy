@@ -3,11 +3,11 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: #f5f7fa;
+  background: #16d549;
 }
 
 .host-register-card {
-  background: #ffffff;
+  background: #f9f9f9;
   padding: 30px;
   border-radius: 14px;
   width: 420px;
