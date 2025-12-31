@@ -1,15 +1,35 @@
 import React, { useState } from "react";
 import { FaEnvelope, FaLock, FaPhone } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import logo from "../assets/logo.jpg";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-    console.log("Login clicked with:", email, password);
-  };
+  const navigate = useNavigate();
+
+  const handleLogin = async (e) => {
+  e.preventDefault();
+
+  try {
+    const res = await axios.post(
+      "http://localhost:5000/api/auth/login",
+      { email, password }
+    );
+
+    localStorage.setItem("token", res.data.token);
+    localStorage.setItem("user", JSON.stringify(res.data.user));
+
+    navigate("/home");
+  } catch (err) {
+    setError("Invalid email or password");
+  }
+};
+
+  
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-white font-[Poppins,sans-serif] px-4">
@@ -34,6 +54,11 @@ function Login() {
           Welcome Back!
         </h3>
 
+        {/* ❌ Error message */}
+        {error && (
+          <p className="text-red-600 text-sm text-center mb-3">{error}</p>
+        )}
+
         <form onSubmit={handleLogin} className="space-y-3">
           {/* Email */}
           <div className="flex items-center border border-gray-300 rounded-md px-3 py-2 bg-white">
@@ -44,6 +69,7 @@ function Login() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full bg-transparent outline-none text-sm"
+              required
             />
           </div>
 
@@ -56,10 +82,11 @@ function Login() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full bg-transparent outline-none text-sm"
+              required
             />
           </div>
 
-          {/* Phone */}
+          {/* Phone (UI only – backend use illa now) */}
           <div className="flex items-center border border-gray-300 rounded-md px-3 py-2 bg-white">
             <FaPhone className="text-gray-600 mr-2" />
             <input

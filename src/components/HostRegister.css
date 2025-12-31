@@ -1,23 +1,22 @@
-/* .host-register-container {
+.host-register-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  min-height: 100vh;
   background: #f5f7fa;
 }
 
 .host-register-card {
-  background: #fff;
+  background: #ffffff;
   padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
-  width: 380px;
+  border-radius: 14px;
+  width: 420px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
 }
 
 .title {
   text-align: center;
   font-size: 24px;
-  color: #333;
   margin-bottom: 20px;
 }
 
@@ -27,18 +26,18 @@ form {
 }
 
 input {
-  margin-bottom: 15px;
+  width: 100%;
   padding: 12px;
-  border: 1px solid #ddd;
+  margin-bottom: 14px;
   border-radius: 8px;
+  border: 1px solid #dcdcdc;
   font-size: 14px;
-  outline: none;
-  transition: all 0.3s ease;
 }
 
 input:focus {
-  border-color: #1ccf84;
-  box-shadow: 0px 0px 5px rgba(0,123,255,0.3);
+  border-color: #10b981;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
 }
 
 .inline-inputs {
@@ -47,16 +46,16 @@ input:focus {
 }
 
 .register-btn {
-  background: #05b133;
-  color: #fff;
+  background: #059669;
+  color: white;
   border: none;
-  padding: 12px;
-  border-radius: 8px;
+  padding: 14px;
+  border-radius: 10px;
   font-size: 16px;
   cursor: pointer;
-  transition: background 0.3s ease;
+  margin-top: 10px;
 }
 
 .register-btn:hover {
-  background: #1bc202;
-} */
+  background: #047857;
+}

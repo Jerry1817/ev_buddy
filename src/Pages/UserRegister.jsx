@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import "../components/UserRegister.css";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function UserRegister() {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -11,74 +14,97 @@ function UserRegister() {
     evModel: "",
   });
 
-  const navigate = useNavigate();
-
-  const handleClick = () => {
-    navigate("/home");
-  };
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("User Registered:", formData);
-    alert("User Registered Successfully!");
+    setError("");
+    setLoading(true);
+
+    try {
+      const res = await axios.post(
+        "http://localhost:5000/api/auth/register",
+        {
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          password: formData.password,
+          evModel: formData.evModel,
+        }
+      );
+
+      alert("Registration successful! Please login.");
+      navigate("/");
+    } catch (err) {
+      console.error(err);
+      setError(
+        err.response?.data?.message || "Registration failed"
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="min-h-screen flex justify-center items-center bg-slate-100 px-4">
       <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
         <h2 className="text-center text-3xl font-semibold text-gray-800 mb-6">
-          User
+          User Registration
         </h2>
 
+        {error && (
+          <p className="text-red-600 text-center mb-3">{error}</p>
+        )}
+
         <form onSubmit={handleSubmit} className="flex flex-col">
-          {/* Name */}
           <input
             type="text"
             name="name"
             placeholder="Name"
-            className="mb-4 p-3 border border-gray-300 rounded-lg text-sm focus:border-blue-500 focus:ring focus:ring-blue-200 outline-none"
+            className="mb-4 p-3 border border-gray-300 rounded-lg"
             value={formData.name}
             onChange={handleChange}
+            required
           />
 
-          {/* Email */}
           <input
             type="email"
             name="email"
             placeholder="Email"
-            className="mb-4 p-3 border border-gray-300 rounded-lg text-sm focus:border-blue-500 focus:ring focus:ring-blue-200 outline-none"
+            className="mb-4 p-3 border border-gray-300 rounded-lg"
             value={formData.email}
             onChange={handleChange}
+            required
           />
 
-          {/* Phone */}
           <input
             type="text"
             name="phone"
             placeholder="Phone number"
-            className="mb-4 p-3 border border-gray-300 rounded-lg text-sm focus:border-blue-500 focus:ring focus:ring-blue-200 outline-none"
+            className="mb-4 p-3 border border-gray-300 rounded-lg"
             value={formData.phone}
             onChange={handleChange}
+            required
           />
 
-          {/* Password */}
           <input
             type="password"
             name="password"
             placeholder="Password"
-            className="mb-4 p-3 border border-gray-300 rounded-lg text-sm focus:border-blue-500 focus:ring focus:ring-blue-200 outline-none"
+            className="mb-4 p-3 border border-gray-300 rounded-lg"
             value={formData.password}
             onChange={handleChange}
+            required
           />
 
-          {/* EV Model Select */}
           <select
             name="evModel"
-            className="mb-4 p-3 border border-gray-300 rounded-lg text-sm bg-white focus:border-blue-500 focus:ring focus:ring-blue-200 outline-none"
+            className="mb-4 p-3 border border-gray-300 rounded-lg bg-white"
             value={formData.evModel}
             onChange={handleChange}
           >
@@ -89,13 +115,12 @@ function UserRegister() {
             <option value="MG ZS EV">MG ZS EV</option>
           </select>
 
-          {/* Submit Button */}
           <button
             type="submit"
-            onClick={handleClick}
-            className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold text-lg cursor-pointer hover:bg-blue-700 active:scale-[0.98] transition"
+            disabled={loading}
+            className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold text-lg hover:bg-green-500 transition"
           >
-            Register
+            {loading ? "Registering..." : "Register"}
           </button>
         </form>
       </div>

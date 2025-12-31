@@ -112,6 +112,7 @@ export default function Profile() {
           className="bg-gradient-to-r from-[#27ae60] to-[#2ecc71] text-white px-7 py-3 rounded-xl font-bold cursor-pointer shadow-[0_4px_10px_rgba(46,204,113,0.3)] transition transform hover:from-[#2ecc71] hover:to-[#27ae60] hover:scale-[1.03] border-none"
         >
           ⎋ Logout
+          
         </button>
       </div>
     </div>

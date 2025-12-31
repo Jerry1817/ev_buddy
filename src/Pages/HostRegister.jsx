@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import "./HostRegister.css";
 
 function HostRegister() {
   const navigate = useNavigate();
@@ -9,114 +11,183 @@ function HostRegister() {
     email: "",
     phone: "",
     password: "",
-    ports: "",
+    stationName: "",
+    totalChargers: "",
     power: "",
     rate: "",
     address: "",
+    latitude: "",
+    longitude: "",
   });
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form Submitted:", formData);
 
-    alert("Host Registered Successfully!");
+    try {
+      /* -------------------------------
+         STEP 1: REGISTER HOST (AUTH)
+      -------------------------------- */
+      await axios.post("http://localhost:5000/api/auth/register", {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        password: formData.password,
+        role: "host",
+      });
 
-    navigate("/hostrequests");
+      /* -------------------------------
+         STEP 2: LOGIN HOST
+      -------------------------------- */
+      const loginRes = await axios.post(
+        "http://localhost:5000/api/auth/login",
+        {
+          email: formData.email,
+          password: formData.password,
+        }
+      );
+
+      const token = loginRes.data.token;
+      localStorage.setItem("token", token);
+      localStorage.setItem("role", "host");
+
+      /* -------------------------------
+         STEP 3: REGISTER STATION
+      -------------------------------- */
+      await axios.post(
+        "http://localhost:5000/api/host/register",
+        {
+          stationName: formData.stationName,
+          totalChargers: formData.totalChargers,
+          power: formData.power,
+          rate: formData.rate,
+          address: formData.address,
+          location: {
+            latitude: formData.latitude,
+            longitude: formData.longitude,
+          },
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      alert("Host & Station registered successfully ⚡🏠");
+      navigate("/host/login");
+    } catch (error) {
+      console.error(error);
+      alert(error.response?.data?.message || "Registration failed");
+    }
   };
 
   return (
-    <div className="min-h-screen flex justify-center items-center bg-slate-100 px-4">
-      <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
-        <h2 className="text-center text-3xl font-semibold text-gray-800 mb-6">
-          Host
-        </h2>
+    <div className="host-register-container">
+      <div className="host-register-card">
+        <h2 className="title">Register Charging Station</h2>
 
-        <form className="flex flex-col" onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit}>
           <input
             type="text"
             name="name"
-            placeholder="Name"
-            className="mb-4 p-3 border border-gray-300 rounded-lg text-sm focus:border-emerald-500 focus:ring focus:ring-emerald-200 outline-none"
-            value={formData.name}
+            placeholder="Owner Name"
             onChange={handleChange}
+            required
           />
 
           <input
             type="email"
             name="email"
-            placeholder="Email"
-            className="mb-4 p-3 border border-gray-300 rounded-lg text-sm focus:border-emerald-500 focus:ring focus:ring-emerald-200 outline-none"
-            value={formData.email}
+            placeholder="Contact Email"
             onChange={handleChange}
+            required
           />
 
           <input
             type="text"
             name="phone"
-            placeholder="Phone number"
-            className="mb-4 p-3 border border-gray-300 rounded-lg text-sm focus:border-emerald-500 focus:ring focus:ring-emerald-200 outline-none"
-            value={formData.phone}
+            placeholder="Contact Phone"
             onChange={handleChange}
+            required
           />
 
           <input
             type="password"
             name="password"
-            placeholder="Password"
-            className="mb-4 p-3 border border-gray-300 rounded-lg text-sm focus:border-emerald-500 focus:ring focus:ring-emerald-200 outline-none"
-            value={formData.password}
+            placeholder="Create Password"
             onChange={handleChange}
+            required
           />
 
-          <div className="flex gap-3 mb-4">
+          <input
+            type="text"
+            name="stationName"
+            placeholder="Station Name"
+            onChange={handleChange}
+            required
+          />
+
+          <div className="inline-inputs">
             <input
-              type="text"
-              name="ports"
-              placeholder="Available ports"
-              className="w-full p-3 border border-gray-300 rounded-lg text-sm focus:border-emerald-500 focus:ring focus:ring-emerald-200 outline-none"
-              value={formData.ports}
+              type="number"
+              name="totalChargers"
+              placeholder="Total Chargers"
               onChange={handleChange}
+              required
             />
 
             <input
-              type="text"
+              type="number"
               name="power"
-              placeholder="kW"
-              className="w-full p-3 border border-gray-300 rounded-lg text-sm focus:border-emerald-500 focus:ring focus:ring-emerald-200 outline-none"
-              value={formData.power}
+              placeholder="Power (kW)"
               onChange={handleChange}
+              required
             />
           </div>
 
-          <div className="flex gap-3 mb-4">
+          <div className="inline-inputs">
             <input
-              type="text"
+              type="number"
               name="rate"
-              placeholder="Rate/kW"
-              className="w-full p-3 border border-gray-300 rounded-lg text-sm focus:border-emerald-500 focus:ring focus:ring-emerald-200 outline-none"
-              value={formData.rate}
+              placeholder="Rate per kW"
               onChange={handleChange}
+              required
             />
 
             <input
               type="text"
               name="address"
-              placeholder="Address"
-              className="w-full p-3 border border-gray-300 rounded-lg text-sm focus:border-emerald-500 focus:ring focus:ring-emerald-200 outline-none"
-              value={formData.address}
+              placeholder="Station Address"
               onChange={handleChange}
+              required
             />
           </div>
 
-          <button
-            type="submit"
-            className="w-full bg-emerald-600 text-white py-3 rounded-lg font-semibold text-lg cursor-pointer hover:bg-emerald-700 active:scale-[0.98] transition-all"
-          >
-            Register
+          {/* 📍 MAP LOCATION */}
+          <div className="inline-inputs">
+            <input
+              type="text"
+              name="latitude"
+              placeholder="Latitude"
+              onChange={handleChange}
+              required
+            />
+
+            <input
+              type="text"
+              name="longitude"
+              placeholder="Longitude"
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <button className="register-btn" type="submit">
+            Register Station
           </button>
         </form>
       </div>
