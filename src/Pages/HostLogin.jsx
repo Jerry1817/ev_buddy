@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -12,6 +12,16 @@ function HostLogin() {
 
   const [loading, setLoading] = useState(false);
 
+  /* 🔁 AUTO LOGIN CHECK */
+  useEffect(() => {
+    const token = localStorage.getItem("hostToken");
+    const role = localStorage.getItem("role");
+
+    if (token && role === "host") {
+      navigate("/hostrequests"); // auto redirect
+    }
+  }, [navigate]);
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -21,7 +31,7 @@ function HostLogin() {
     setLoading(true);
 
     try {
-      // 🔐 LOGIN (COMMON AUTH API)
+      // 🔐 LOGIN API
       const res = await axios.post(
         "http://localhost:5000/api/auth/login",
         {
@@ -32,15 +42,15 @@ function HostLogin() {
 
       const { token, role } = res.data;
 
-      // ❌ Not a host
+      // ❌ If not host
       if (role !== "host") {
         alert("This account is not registered as a host");
         setLoading(false);
         return;
       }
 
-      // ✅ SAVE TOKEN
-      localStorage.setItem("token", token);
+      // ✅ SAVE HOST TOKEN SAFELY
+      localStorage.setItem("hostToken", token);
       localStorage.setItem("role", role);
 
       alert("Host login successful ⚡🏠");

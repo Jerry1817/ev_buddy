@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-
 import HomeMap from "../components/HomeMap";
 
 import {
@@ -17,21 +16,34 @@ import {
 function Home() {
   const navigate = useNavigate();
 
+  // Logged user
   const user = JSON.parse(localStorage.getItem("user"));
+
+  // Stations from DB
   const [stations, setStations] = useState([]);
 
+  // Selected station (map ↔ card sync)
+  const [selectedStationId, setSelectedStationId] = useState(null);
+
+  // Card refs (for auto scroll later)
+  const cardRefs = useRef({});
+
+  /* =========================
+     LOGOUT
+  ========================= */
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
+    localStorage.clear();
     navigate("/");
   };
 
-  // ✅ Fetch stations from DB
+  /* =========================
+     FETCH STATIONS FROM DB
+  ========================= */
   useEffect(() => {
     const fetchStations = async () => {
       try {
         const res = await axios.get(
-          "http://localhost:5000/api/stations/all"
+          "http://localhost:5000/api/stations"
         );
         setStations(res.data);
       } catch (err) {
@@ -42,13 +54,29 @@ function Home() {
     fetchStations();
   }, []);
 
-  return (
-    <div className="min-h-screen flex flex-col justify-between bg-slate-50 font-[Poppins] pt-16 pb-16">
+  /* =========================
+     WHEN MAP MARKER CLICKED
+  ========================= */
+  const handleMarkerSelect = (stationId) => {
+    setSelectedStationId(stationId);
 
-      {/* 👋 Welcome + Logout */}
+    // Scroll selected card into view
+    const card = cardRefs.current[stationId];
+    if (card) {
+      card.scrollIntoView({
+        behavior: "smooth",
+        inline: "center",
+      });
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex flex-col bg-slate-50 font-[Poppins] pt-16 pb-16">
+
+      {/* 👋 HEADER */}
       <div className="flex justify-between items-center px-4 mb-2">
         <h2 className="text-sm font-semibold text-slate-800">
-          Welcome, {user?.name} 👋
+          Welcome, {user?.name || "User"} 👋
         </h2>
 
         <button
@@ -60,13 +88,13 @@ function Home() {
         </button>
       </div>
 
-      {/* 🔍 Search */}
+      {/* 🔍 SEARCH */}
       <div className="px-3">
         <div className="flex items-center bg-white rounded-xl shadow-sm px-3 py-2">
           <IoSearchOutline className="text-gray-400 mr-2 text-lg" />
           <input
             type="text"
-            placeholder="Search for location or EV station..."
+            placeholder="Search EV stations..."
             className="flex-1 bg-transparent outline-none text-sm"
           />
           <button className="ml-2 p-1.5 rounded-full bg-slate-100">
@@ -76,8 +104,12 @@ function Home() {
       </div>
 
       {/* 🗺️ OPEN STREET MAP */}
-      <div className="mx-3 mt-3 rounded-xl overflow-hidden">
-        <HomeMap />
+      <div className="mx-3 mt-3 rounded-xl overflow-hidden h-[45vh]">
+        <HomeMap
+          stations={stations}
+          selectedStationId={selectedStationId}
+          onMarkerSelect={handleMarkerSelect}
+        />
       </div>
 
       {/* 🔋 STATION LIST */}
@@ -91,7 +123,15 @@ function Home() {
             {stations.map((station) => (
               <div
                 key={station._id}
-                className="min-w-[85%] bg-white p-4 rounded-2xl shadow-md"
+                ref={(el) =>
+                  (cardRefs.current[station._id] = el)
+                }
+                className={`min-w-[85%] p-4 rounded-2xl shadow-md transition-all
+                  ${
+                    selectedStationId === station._id
+                      ? "border-2 border-emerald-500 bg-emerald-50"
+                      : "bg-white"
+                  }`}
               >
                 <h3 className="text-base font-semibold">
                   {station.stationName}
@@ -126,7 +166,7 @@ function Home() {
         )}
       </div>
 
-      {/* 🌐 Bottom Nav */}
+      {/* 🌐 BOTTOM NAV */}
       <div className="flex justify-around bg-white py-2.5 border-t">
         <button
           className="text-emerald-500"
@@ -139,9 +179,16 @@ function Home() {
           <IoListOutline />
         </button>
 
-        <button onClick={() => navigate("/host/login")}>
-          <IoAddCircleOutline />
-        </button>
+     <button
+  onClick={() => {
+    localStorage.removeItem("hostToken");
+    localStorage.removeItem("role");
+    navigate("/host/login");
+  }}
+>
+  <IoAddCircleOutline />
+</button>
+
 
         <button onClick={() => navigate("/profile")}>
           <IoPersonOutline />

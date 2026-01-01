@@ -7,20 +7,23 @@ function HostRequests() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  /* 🔐 AUTH CHECK + FETCH */
   useEffect(() => {
-    fetchRequests();
-  }, []);
+    const token = localStorage.getItem("hostToken");
+    const role = localStorage.getItem("role");
 
-  const fetchRequests = async () => {
+    if (!token || role !== "host") {
+      alert("Please login as host");
+      navigate("/host/login");
+      return;
+    }
+
+    fetchRequests(token);
+  }, [navigate]);
+
+  /* 📥 FETCH HOST REQUESTS */
+  const fetchRequests = async (token) => {
     try {
-      const token = localStorage.getItem("token");
-
-      if (!token) {
-        alert("Please login again");
-        navigate("/");
-        return;
-      }
-
       const res = await axios.get(
         "http://localhost:5000/api/charging-request/host",
         {
@@ -39,6 +42,48 @@ function HostRequests() {
     }
   };
 
+  /* ✅ ACCEPT REQUEST */
+  const acceptRequest = async (requestId) => {
+    try {
+      await axios.post(
+        `http://localhost:5000/api/charging-request/accept/${requestId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("hostToken")}`,
+          },
+        }
+      );
+
+      alert("Request accepted");
+      fetchRequests(localStorage.getItem("hostToken"));
+    } catch (error) {
+      console.error(error);
+      alert("Failed to accept request");
+    }
+  };
+
+  /* ❌ REJECT REQUEST */
+  const rejectRequest = async (requestId) => {
+    try {
+      await axios.post(
+        `http://localhost:5000/api/charging-request/reject/${requestId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("hostToken")}`,
+          },
+        }
+      );
+
+      alert("Request rejected");
+      fetchRequests(localStorage.getItem("hostToken"));
+    } catch (error) {
+      console.error(error);
+      alert("Failed to reject request");
+    }
+  };
+
   if (loading) {
     return <p className="p-4">Loading requests...</p>;
   }
@@ -54,7 +99,7 @@ function HostRequests() {
       {requests.map((req) => (
         <div
           key={req._id}
-          className="bg-white rounded-xl shadow p-4 mb-3"
+          className="bg-white rounded-xl shadow p-4 mb-4"
         >
           <p className="font-semibold">
             User: {req.userId?.name}
@@ -81,6 +126,25 @@ function HostRequests() {
               {req.status}
             </span>
           </p>
+
+          {/* 🎯 ACTION BUTTONS */}
+          {req.status === "pending" && (
+            <div className="flex gap-3 mt-4">
+              <button
+                onClick={() => acceptRequest(req._id)}
+                className="flex-1 bg-emerald-600 text-white py-2 rounded-lg font-medium hover:bg-emerald-700"
+              >
+                Accept
+              </button>
+
+              <button
+                onClick={() => rejectRequest(req._id)}
+                className="flex-1 bg-red-500 text-white py-2 rounded-lg font-medium hover:bg-red-600"
+              >
+                Reject
+              </button>
+            </div>
+          )}
         </div>
       ))}
     </div>

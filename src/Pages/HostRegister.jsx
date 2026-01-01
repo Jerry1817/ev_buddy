@@ -19,7 +19,6 @@ function HostRegister() {
     address: "",
   });
 
-  // 📍 LOCATION STATE (IMPORTANT)
   const [location, setLocation] = useState({
     lat: null,
     lng: null,
@@ -32,29 +31,26 @@ function HostRegister() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // 🚨 Location validation
     if (!location.lat || !location.lng) {
-      alert("Please pick station location from map 📍");
+      alert("Please pick station location 📍");
       return;
     }
 
+    let token = null;
+
     try {
       /* =========================
-         STEP 1: REGISTER HOST
+         STEP 1: TRY REGISTER HOST
       ========================== */
-      // STEP 3: REGISTER HOST
-await axios.post("http://localhost:5000/api/auth/register", {
-  name: formData.name,
-  email: formData.email,
-  phone: formData.phone,
-  password: formData.password,
-  role: "host",
-});
+      await axios.post("http://localhost:5000/api/auth/register", {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        password: formData.password,
+        role: "host",
+      });
 
-
-      /* =========================
-         STEP 2: LOGIN HOST
-      ========================== */
+      // If registration success → login
       const loginRes = await axios.post(
         "http://localhost:5000/api/auth/login",
         {
@@ -63,12 +59,33 @@ await axios.post("http://localhost:5000/api/auth/register", {
         }
       );
 
-      const token = loginRes.data.token;
-      localStorage.setItem("token", token);
-      localStorage.setItem("role", "host");
+      token = loginRes.data.token;
+    } catch (error) {
+      // If user already exists → login directly
+      if (error.response?.data?.message === "User already exists") {
+        try {
+          const loginRes = await axios.post(
+            "http://localhost:5000/api/auth/login",
+            {
+              email: formData.email,
+              password: formData.password,
+            }
+          );
 
+          token = loginRes.data.token;
+        } catch (loginErr) {
+          alert("Login failed. Check email or password.");
+          return;
+        }
+      } else {
+        alert(error.response?.data?.message || "Registration failed");
+        return;
+      }
+    }
+
+    try {
       /* =========================
-         STEP 3: REGISTER STATION
+         STEP 2: REGISTER STATION
       ========================== */
       await axios.post(
         "http://localhost:5000/api/host/register",
@@ -78,8 +95,6 @@ await axios.post("http://localhost:5000/api/auth/register", {
           power: formData.power,
           rate: formData.rate,
           address: formData.address,
-
-          // 📍 LOCATION SENT TO DB
           location: {
             lat: location.lat,
             lng: location.lng,
@@ -92,11 +107,16 @@ await axios.post("http://localhost:5000/api/auth/register", {
         }
       );
 
-      alert("Host & Station registered successfully ⚡🏠");
-      navigate("/host/login");
-    } catch (error) {
-      console.error(error);
-      alert(error.response?.data?.message || "Registration failed");
+      localStorage.setItem("token", token);
+      localStorage.setItem("role", "host");
+
+      alert("Station registered successfully ⚡");
+      navigate("/host/dashboard");
+    } catch (stationErr) {
+      alert(
+        stationErr.response?.data?.message ||
+          "Station registration failed"
+      );
     }
   };
 
@@ -106,97 +126,29 @@ await axios.post("http://localhost:5000/api/auth/register", {
         <h2 className="title">Register Charging Station</h2>
 
         <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            name="name"
-            placeholder="Owner Name"
-            onChange={handleChange}
-            required
-          />
-
-          <input
-            type="email"
-            name="email"
-            placeholder="Contact Email"
-            onChange={handleChange}
-            required
-          />
-
-          <input
-            type="text"
-            name="phone"
-            placeholder="Contact Phone"
-            onChange={handleChange}
-            required
-          />
-
-          <input
-            type="password"
-            name="password"
-            placeholder="Create Password"
-            onChange={handleChange}
-            required
-          />
-
-          <input
-            type="text"
-            name="stationName"
-            placeholder="Station Name"
-            onChange={handleChange}
-            required
-          />
+          <input type="text" name="name" placeholder="Owner Name" onChange={handleChange} required />
+          <input type="email" name="email" placeholder="Contact Email" onChange={handleChange} required />
+          <input type="text" name="phone" placeholder="Contact Phone" onChange={handleChange} required />
+          <input type="password" name="password" placeholder="Password" onChange={handleChange} required />
+          <input type="text" name="stationName" placeholder="Station Name" onChange={handleChange} required />
 
           <div className="inline-inputs">
-            <input
-              type="number"
-              name="totalChargers"
-              placeholder="Total Chargers"
-              onChange={handleChange}
-              required
-            />
-
-            <input
-              type="number"
-              name="power"
-              placeholder="Power (kW)"
-              onChange={handleChange}
-              required
-            />
+            <input type="number" name="totalChargers" placeholder="Total Chargers" onChange={handleChange} required />
+            <input type="number" name="power" placeholder="Power (kW)" onChange={handleChange} required />
           </div>
 
           <div className="inline-inputs">
-            <input
-              type="number"
-              name="rate"
-              placeholder="Rate per kW"
-              onChange={handleChange}
-              required
-            />
-
-            <input
-              type="text"
-              name="address"
-              placeholder="Station Address"
-              onChange={handleChange}
-              required
-            />
+            <input type="number" name="rate" placeholder="Rate per kW" onChange={handleChange} required />
+            <input type="text" name="address" placeholder="Station Address" onChange={handleChange} required />
           </div>
 
-          {/* =========================
-              📍 MAP PICKER SECTION
-          ========================== */}
           <h4 style={{ marginTop: "15px" }}>📍 Pick Station Location</h4>
 
-          <MapPicker
-            setLocation={(loc) =>
-              setLocation({ lat: loc.lat, lng: loc.lng })
-            }
-          />
+          <MapPicker setLocation={(loc) => setLocation(loc)} />
 
           {location.lat && (
             <p className="location-text">
-              Selected: {location.lat.toFixed(5)},{" "}
-              {location.lng.toFixed(5)}
+              Selected: {location.lat.toFixed(5)}, {location.lng.toFixed(5)}
             </p>
           )}
 
