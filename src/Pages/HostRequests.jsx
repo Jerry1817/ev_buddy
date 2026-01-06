@@ -9,10 +9,10 @@ function HostRequests() {
 
   /* 🔐 AUTH CHECK + FETCH */
   useEffect(() => {
-    const token = localStorage.getItem("hostToken");
+    const token = localStorage.getItem("token");
     const role = localStorage.getItem("role");
 
-    if (!token || role !== "host") {
+    if (!token || role !== "HOST") {
       alert("Please login as host");
       navigate("/host/login");
       return;

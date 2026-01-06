@@ -39,21 +39,21 @@ function HostLogin() {
           password: formData.password,
         }
       );
-
+      
+      
+      console.log(res,"ress");
       const { token, role } = res.data;
 
       // ❌ If not host
-      if (role !== "host") {
+      if (role !== "HOST") {
         alert("This account is not registered as a host");
         setLoading(false);
         return;
       }
 
       // ✅ SAVE HOST TOKEN SAFELY
-      localStorage.setItem("hostToken", token);
+      // localStorage.setItem("hostToken", token);
       localStorage.setItem("role", role);
-
-      alert("Host login successful ⚡🏠");
 
       navigate("/hostrequests");
     } catch (error) {

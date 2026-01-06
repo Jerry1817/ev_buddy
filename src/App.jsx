@@ -28,9 +28,9 @@ function App() {
   return (
     <Routes>
       {/* 🔓 AUTH ROUTES */}
-      <Route path="/" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/userregister" element={<UserRegister />} />
+      <Route path="/Login" element={<Login />} />
 
       {/* 🔐 USER ROUTES */}
       <Route
@@ -44,9 +44,9 @@ function App() {
         <Route
         path="/nearby"
         element={
-          // <ProtectedRoute>
+          <ProtectedRoute>
             <Nearbylocation />
-          // </ProtectedRoute>
+          </ProtectedRoute>
         }
       />
 
