@@ -102,7 +102,7 @@ function UserRegister() {
             required
           />
 
-          <select
+          {/* <select
             name="evModel"
             className="mb-4 p-3 border border-gray-300 rounded-lg bg-white"
             value={formData.evModel}
@@ -113,7 +113,7 @@ function UserRegister() {
             <option value="Nissan Leaf">Nissan Leaf</option>
             <option value="Hyundai Kona">Hyundai Kona</option>
             <option value="MG ZS EV">MG ZS EV</option>
-          </select>
+          </select> */}
 
           <button
             type="submit"

@@ -1,4 +1,5 @@
 import { Routes, Route } from "react-router-dom";
+import "leaflet/dist/leaflet.css";
 import "./App.css";
 
 import Login from "./Pages/Login";
@@ -22,6 +23,7 @@ import UserRequests from "./Pages/UserRequests";
 import ProtectedRoute from "./components/ProtectedRoute";
 import StationDetail from "./Pages/StationDetail"; // ✅ FIXED PATH
 import HostLogin from "./Pages/HostLogin";
+import Nearbylocation from "./Pages/Nearby";
 function App() {
   return (
     <Routes>
@@ -39,6 +41,20 @@ function App() {
           </ProtectedRoute>
         }
       />
+        <Route
+        path="/nearby"
+        element={
+          <ProtectedRoute>
+            <Nearbylocation />
+          </ProtectedRoute>
+        }
+      />
+
+
+
+
+
+
       <Route
   path="/myrequests"
   element={

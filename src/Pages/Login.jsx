@@ -19,12 +19,13 @@ function Login() {
       "http://localhost:5000/api/auth/login",
       { email, password }
     );
-
-    localStorage.setItem("token", res.data.token);
-    localStorage.setItem("user", JSON.stringify(res.data.user));
-
-    navigate("/home");
+    if(res.data.success){
+      localStorage.setItem("token", res.data.token);
+      navigate("/home");
+    }
+    // localStorage.setItem("user", JSON.stringify(res.data.user))
   } catch (err) {
+    console.log(err)
     setError("Invalid email or password");
   }
 };
