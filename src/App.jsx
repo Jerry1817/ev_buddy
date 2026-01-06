@@ -44,9 +44,9 @@ function App() {
         <Route
         path="/nearby"
         element={
-          <ProtectedRoute>
+          // <ProtectedRoute>
             <Nearbylocation />
-          </ProtectedRoute>
+          // </ProtectedRoute>
         }
       />
 
