@@ -7,8 +7,11 @@ function UserRequests() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+
+  console.log(requests,"lllllllllllll")
   useEffect(() => {
-    fetchMyRequests();
+      fetchMyRequests();
+    
   }, []);
 
   const fetchMyRequests = async () => {
@@ -22,7 +25,7 @@ function UserRequests() {
       }
 
       const res = await axios.get(
-        "http://localhost:5000/api/charging-request/user",
+        "http://localhost:5000/api/auth/viewrequests",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -55,16 +58,31 @@ function UserRequests() {
         </p>
       )}
 
-      {requests.map((req) => (
+      {requests.data.map((req) => (
         <div
           key={req._id}
           className="bg-white p-4 rounded-xl shadow mb-3"
         >
           <p className="font-semibold">
-            🔌 {req.stationId?.name}
+             {req.host?.evStation.name}
+          </p>
+            <p className="font-semibold">
+             {req.host?.evStation.address}
+          </p>
+            <p className="font-semibold">
+            🔌 {req.host?.evStation.availableChargers}
+          </p>
+            <p className="font-semibold">
+             {req.host?.evStation.chargingPricePerUnit}
+          </p>
+            <p className="font-semibold">
+            🔌 {req.host?.evStation.power}
+          </p>
+            <p className="font-semibold">
+            🔌 {req.host?.evStation.connectorType}
           </p>
           <p className="text-sm text-gray-600">
-            {req.stationId?.address}
+            {req.host?.evStation.description}
           </p>
 
           <p className="text-sm mt-2">
@@ -85,7 +103,7 @@ function UserRequests() {
           {req.status === "accepted" && (
             <button
               className="mt-3 w-full bg-emerald-500 text-white py-2 rounded-lg"
-              onClick={() => navigate("/charging")}
+              onClick={() => navigate("/charging",{state:req._id})}
             >
               Start Charging
             </button>

@@ -1,18 +1,85 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import axios from "axios";
 
 function Charging() {
+  const {state}=useLocation()
   const [seconds, setSeconds] = useState(0);
+  const [isCharging, setIsCharging] = useState(false);
+  const [sessionId, setSessionId] = useState(null);
+ 
+  
+
   const navigate = useNavigate();
 
-  const handleCharging = () => {
-    navigate("/payment");
+  // Start charging API
+  const startCharging = async () => {
+    try {
+      const res = await axios.post(
+        "http://localhost:5000/api/auth/chargingstart",
+        {
+          requestId:state
+          
+         
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      setSessionId(res.data.data._id);
+      setIsCharging(true);
+    } catch (err) {
+      alert("Failed to start charging");
+      console.error(err);
+    }
   };
 
+  // Stop charging
+const stopCharging = async () => {
+  try {
+    const res = await axios.post(
+      "http://localhost:5000/api/auth/chargingend",
+      {
+        sessionId,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
+    if(res.data.success){
+      navigate("/payment", {
+        state: {
+          session: res.data.data.sessionId,
+          duration: res.data.data.durationInMinutes,
+          totalCost: res.data.data.totalCost,
+        },
+      });
+
+    }
+
+  } catch (err) {
+    console.error(err);
+    alert("Failed to stop charging");
+  }
+};
+
+
+  // Timer runs ONLY when charging started
   useEffect(() => {
-    const timer = setInterval(() => setSeconds((s) => s + 1), 1000);
+    if (!isCharging) return;
+
+    const timer = setInterval(() => {
+      setSeconds((s) => s + 1);
+    }, 1000);
+
     return () => clearInterval(timer);
-  }, []);
+  }, [isCharging]);
 
   const format = (s) =>
     `${String(Math.floor(s / 3600)).padStart(2, "0")}:${String(
@@ -21,41 +88,29 @@ function Charging() {
 
   return (
     <div className="min-h-screen bg-white p-6 pb-24 flex flex-col items-center font-sans">
-      {/* Back button */}
-      <button className="self-start bg-transparent border-none text-[22px] cursor-pointer mb-1.5">
-        ←
-      </button>
-
-      {/* Title */}
-      <h2 className="text-[20px] font-extrabold mt-1.5 text-[#111111]">
+      <h2 className="text-[20px] font-extrabold mt-4">
         Charging Active
       </h2>
 
-      {/* Timer */}
-      <div className="font-mono text-5xl font-black my-7 text-[#111111]">
+      <div className="font-mono text-5xl font-black my-7">
         {format(seconds)}
       </div>
 
-      {/* Stop button */}
-      <button
-        onClick={handleCharging}
-        className="py-[14px] px-5 bg-white border border-[#f3c3c3] text-red-500 rounded-xl font-extrabold cursor-pointer"
-      >
-        Stop Charging
-      </button>
-
-      {/* Bottom nav */}
-      <div className="fixed inset-x-0 bottom-3 flex justify-center gap-4">
-        <button className="w-14 h-11 rounded-xl border-none bg-white shadow-md">
-          🏠
+      {!isCharging ? (
+        <button
+          onClick={startCharging}
+          className="py-3 px-6 bg-green-600 text-white rounded-xl font-bold"
+        >
+          Start Charging
         </button>
-        <button className="w-14 h-11 rounded-xl border-none bg-white shadow-md">
-          📄
+      ) : (
+        <button
+          onClick={stopCharging}
+          className="py-3 px-6 bg-white border border-red-300 text-red-500 rounded-xl font-bold"
+        >
+          Stop Charging
         </button>
-        <button className="w-14 h-11 rounded-xl border-none bg-white shadow-md">
-          👤
-        </button>
-      </div>
+      )}
     </div>
   );
 }

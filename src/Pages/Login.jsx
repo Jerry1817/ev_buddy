@@ -1,119 +1,242 @@
-import React, { useState } from "react";
-import { FaEnvelope, FaLock, FaPhone } from "react-icons/fa";
+import { useState } from "react";
+import { Mail, Lock, Phone, Eye, EyeOff, Zap, ArrowRight } from "lucide-react";
+import axios from 'axios'
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import logo from "../assets/logo.jpg";
 
 function Login() {
+  const navigate =useNavigate()
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [phone, setPhone] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
-
-  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = async (e) => {
   e.preventDefault();
+  setIsLoading(true);
+  setError("");
 
   try {
-    const res = await axios.post(
-      "http://localhost:5000/api/auth/login",
-      { email, password }
-    );
-    if(res.data.success){
+    // Make the API call with await
+    const res = await axios.post("http://localhost:5000/api/auth/login", { 
+      email, 
+      password 
+    });
+    
+    console.log(res, 'res');
+    
+    if (res.data.success) {
       localStorage.setItem("token", res.data.token);
-      navigate("/home");
+      navigate("/"); 
     }
-    // localStorage.setItem("user", JSON.stringify(res.data.user))
   } catch (err) {
-    console.log(err)
-    setError("Invalid email or password");
+    console.error(err);
+    setError(err.response?.data?.message || "Invalid email or password");
+  } finally {
+    setIsLoading(false);
   }
 };
 
-  
-
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-white font-[Poppins,sans-serif] px-4">
-      {/* Logo Section */}
-      <div className="text-center mb-6">
-        <img
-          src={logo}
-          alt="EV Buddy Logo"
-          className="w-20 h-20 rounded-full mx-auto object-cover"
-        />
-        <h2 className="mt-3 mb-1 text-xl font-semibold text-[#003366]">
-          EV Buddy
-        </h2>
-        <p className="text-sm text-gray-500">
-          Your next charge is just a click away ⚡
-        </p>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-50 via-white to-teal-50 px-4 py-8 relative overflow-hidden">
+      <style>{`
+        @keyframes float {
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          50% { transform: translateY(-20px) rotate(5deg); }
+        }
+        
+        @keyframes pulse-glow {
+          0%, 100% { box-shadow: 0 0 20px rgba(5, 150, 105, 0.3); }
+          50% { box-shadow: 0 0 30px rgba(5, 150, 105, 0.5); }
+        }
+
+        @keyframes slide-in {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-float {
+          animation: float 6s ease-in-out infinite;
+        }
+
+        .animate-pulse-glow {
+          animation: pulse-glow 2s ease-in-out infinite;
+        }
+
+        .animate-slide-in {
+          animation: slide-in 0.6s ease-out forwards;
+        }
+
+        .input-focus:focus-within {
+          border-color: #059669;
+          box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+        }
+      `}</style>
+
+      {/* Background Decorations */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-400/10 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-teal-400/10 rounded-full blur-3xl transform -translate-x-1/2 translate-y-1/2"></div>
       </div>
 
-      {/* Card / Form */}
-      <div className="bg-[#f9f9f9] px-6 py-6 rounded-xl shadow-md w-full max-w-xs">
-        <h3 className="text-lg font-semibold text-[#1b2e4b] text-center mb-5">
-          Welcome Back!
-        </h3>
+      {/* Main Container */}
+      <div className="relative w-full max-w-md animate-slide-in">
+        {/* Logo & Header */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl mb-4 animate-float animate-pulse-glow">
+            <Zap className="w-10 h-10 text-white" strokeWidth={2.5} />
+          </div>
+          <h1 className="text-3xl font-bold text-slate-900 mb-2">
+            Welcome Back
+          </h1>
+          <p className="text-slate-600">
+            Your next charge is just a click away ⚡
+          </p>
+        </div>
 
-        {/* ❌ Error message */}
-        {error && (
-          <p className="text-red-600 text-sm text-center mb-3">{error}</p>
-        )}
+        {/* Login Card */}
+        <div className="bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/50 p-8">
+          {/* Error Alert */}
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3">
+              <div className="w-5 h-5 bg-red-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                <span className="text-white text-xs font-bold">!</span>
+              </div>
+              <p className="text-red-700 text-sm flex-1">{error}</p>
+            </div>
+          )}
 
-        <form onSubmit={handleLogin} className="space-y-3">
-          {/* Email */}
-          <div className="flex items-center border border-gray-300 rounded-md px-3 py-2 bg-white">
-            <FaEnvelope className="text-gray-600 mr-2" />
-            <input
-              type="email"
-              placeholder="Enter your Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-transparent outline-none text-sm"
-              required
-            />
+          <div className="space-y-5">
+            {/* Email Input */}
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">
+                Email Address
+              </label>
+              <div className="input-focus relative flex items-center border-2 border-slate-200 rounded-xl px-4 py-3 bg-white transition-all duration-200">
+                <Mail className="w-5 h-5 text-slate-400 mr-3" />
+                <input
+                  type="email"
+                  placeholder="you@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleLogin(e)}
+                  className="w-full bg-transparent outline-none text-slate-900 placeholder:text-slate-400"
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Password Input */}
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">
+                Password
+              </label>
+              <div className="input-focus relative flex items-center border-2 border-slate-200 rounded-xl px-4 py-3 bg-white transition-all duration-200">
+                <Lock className="w-5 h-5 text-slate-400 mr-3" />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleLogin(e)}
+                  className="w-full bg-transparent outline-none text-slate-900 placeholder:text-slate-400"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="ml-2 text-slate-400 hover:text-slate-600 transition-colors"
+                >
+                  {showPassword ? (
+                    <EyeOff className="w-5 h-5" />
+                  ) : (
+                    <Eye className="w-5 h-5" />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* Phone Input (Optional) */}
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">
+                Mobile Number <span className="text-slate-400 text-xs">(Optional)</span>
+              </label>
+              <div className="input-focus relative flex items-center border-2 border-slate-200 rounded-xl px-4 py-3 bg-white transition-all duration-200">
+                <Phone className="w-5 h-5 text-slate-400 mr-3" />
+                <input
+                  type="tel"
+                  placeholder="+1 (555) 000-0000"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  className="w-full bg-transparent outline-none text-slate-900 placeholder:text-slate-400"
+                />
+              </div>
+            </div>
+
+            {/* Forgot Password Link */}
+            <div className="flex justify-end">
+              <a
+                href="/forgot-password"
+                className="text-sm text-emerald-600 hover:text-emerald-700 font-medium hover:underline"
+              >
+                Forgot password?
+              </a>
+            </div>
+
+            {/* Login Button */}
+            <button
+              onClick={handleLogin}
+              disabled={isLoading}
+              className="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 text-white font-semibold rounded-xl py-4 px-6 flex items-center justify-center gap-2 hover:from-emerald-700 hover:to-emerald-800 transition-all duration-200 shadow-lg shadow-emerald-600/30 disabled:opacity-50 disabled:cursor-not-allowed group"
+            >
+              {isLoading ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <span>Logging in...</span>
+                </>
+              ) : (
+                <>
+                  <span>Login to EV Buddy</span>
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </>
+              )}
+            </button>
           </div>
 
-          {/* Password */}
-          <div className="flex items-center border border-gray-300 rounded-md px-3 py-2 bg-white">
-            <FaLock className="text-gray-600 mr-2" />
-            <input
-              type="password"
-              placeholder="Enter your Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-transparent outline-none text-sm"
-              required
-            />
+          {/* Divider */}
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-slate-200"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-4 bg-white text-slate-500">or</span>
+            </div>
           </div>
 
-          {/* Phone (UI only – backend use illa now) */}
-          <div className="flex items-center border border-gray-300 rounded-md px-3 py-2 bg-white">
-            <FaPhone className="text-gray-600 mr-2" />
-            <input
-              type="text"
-              placeholder="Enter your Mobile Number"
-              className="w-full bg-transparent outline-none text-sm"
-            />
+          {/* Sign Up Link */}
+          <div className="text-center">
+            <p className="text-slate-600">
+              Don't have an account?{" "}
+              <a
+                href="/UserRegister"
+                className="text-emerald-600 font-semibold hover:text-emerald-700 hover:underline"
+              >
+                Create Account
+              </a>
+            </p>
           </div>
+        </div>
 
-          {/* Login Button */}
-          <button
-            type="submit"
-            className="w-full mt-2 py-2.5 bg-emerald-600 text-white font-bold rounded-md cursor-pointer transition hover:bg-emerald-700 active:scale-[0.98]"
-          >
-            Login
-          </button>
-        </form>
-
-        {/* Signup text */}
-        <p className="text-sm text-center mt-4">
-          Don’t have an account?{" "}
-          <a
-            href="/UserRegister"
-            className="text-emerald-600 font-medium hover:underline"
-          >
-            Sign Up
+        {/* Footer */}
+        <p className="text-center text-sm text-slate-500 mt-6">
+          By continuing, you agree to our{" "}
+          <a href="/terms" className="text-emerald-600 hover:underline">
+            Terms of Service
+          </a>{" "}
+          and{" "}
+          <a href="/privacy" className="text-emerald-600 hover:underline">
+            Privacy Policy
           </a>
         </p>
       </div>
