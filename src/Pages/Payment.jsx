@@ -1,20 +1,24 @@
 import axios from "axios";
 import { useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function Payment() {
+  const navigate=useNavigate()
   const { state } = useLocation();
 
   if (!state) return <p>No payment data</p>;
 
-  const { sessionId, duration, totalCost } = state;
+  const { session, duration, totalCost } = state;
+  console.log(state,"state");
+  
+  console.log(state.session,"sessionId");
 
   const handlePayment = async () => {
-    console.log("ethi");
     
     try {
       const res = await axios.post(
         "http://localhost:5000/api/auth/payment/createorder",
-        { sessionId },
+        {sessionId:state.session },
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -23,6 +27,9 @@ function Payment() {
       );
 
       openRazorpay(res.data.order);
+      if(res.data.success){
+        navigate('/paymentsuccess',{state:res.data})
+      }
     } catch (err) {
       alert("Payment failed");
       console.error(err);
@@ -31,7 +38,7 @@ function Payment() {
 
   const openRazorpay = (order) => {
     const options = {
-      key: "RAZORPAY_KEY_ID",
+      key: "rzp_test_Rc23zKSi6P5WfQ",
       amount: order.amount,
       currency: order.currency,
       name: "EV Buddy",

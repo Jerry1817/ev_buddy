@@ -25,6 +25,7 @@ import HostLogin from "./Pages/HostLogin";
 import Nearbylocation from "./Pages/Nearby";
 import Location from "./Pages/Location";
 import Home from "./components/Home";
+import PaymentSuccess from "./Pages/PaymentSuccess";
 
 function App() {
   return (
@@ -33,20 +34,18 @@ function App() {
       <Route path="/register" element={<Register />} />
       <Route path="/userregister" element={<UserRegister />} />
       <Route path="/Login" element={<Login />} />
-      <Route path="/" element={<Home/>} />
-
-
+      <Route path="/" element={<Home />} />
 
       {/* 🔐 USER ROUTES */}
       <Route
         path="/location"
         element={
           <ProtectedRoute>
-           <Location/>
+            <Location />
           </ProtectedRoute>
         }
       />
-        <Route
+      <Route
         path="/nearby"
         element={
           <ProtectedRoute>
@@ -55,19 +54,14 @@ function App() {
         }
       />
 
-
-
-
-
-
       <Route
-  path="/myrequests"
-  element={
-    <ProtectedRoute>
-      <UserRequests />
-    </ProtectedRoute>
-  }
-/>
+        path="/myrequests"
+        element={
+          <ProtectedRoute>
+            <UserRequests />
+          </ProtectedRoute>
+        }
+      />
       <Route
         path="/profile"
         element={
@@ -91,6 +85,14 @@ function App() {
         element={
           <ProtectedRoute>
             <Payment />
+          </ProtectedRoute>
+        }
+      />
+        <Route
+        path="/paymentsuccess"
+        element={
+          <ProtectedRoute>
+            <PaymentSuccess/>
           </ProtectedRoute>
         }
       />
@@ -133,7 +135,7 @@ function App() {
         }
       />
 
-          <Route path="/host/login" element={<HostLogin />} />
+      <Route path="/host/login" element={<HostLogin />} />
 
       <Route
         path="/hostrequests"
