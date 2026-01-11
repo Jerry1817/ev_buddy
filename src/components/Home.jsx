@@ -1,42 +1,98 @@
-import { useEffect, useState } from 'react';
-import { MapPin, AlertCircle, Zap, Battery, Clock, Navigation, ChevronRight, LogIn,LogOut } from 'lucide-react';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useEffect, useState } from "react";
+import {
+  MapPin,
+  AlertCircle,
+  Zap,
+  Battery,
+  Clock,
+  Navigation,
+  ChevronRight,
+  LogIn,
+  LogOut,
+} from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import axios from "axios";
+import { User } from'lucide-react';
 
-
-
-function Home(){
+function Home() {
   const navigate = useNavigate();
+  const state = useLocation();
 
+  const token = localStorage.getItem("token");
+  const userName = token
+    ? state.state?.name || localStorage.getItem("userName")
+    : null;
+
+  const [statsData, setStatsData] = useState(null);
   const [location, setLocation] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
 
-    useEffect(()=>{
-        const token =localStorage.getItem('token')
-        setIsLoggedIn(!!token)
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    console.log(token, "token");
+    if (!token) return;
 
-    },[])
+    const fetchStats = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/auth/homestats", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        localStorage.setItem("userName", state.state?.name);
 
-const handleLogout =()=>{
-    localStorage.removeItem('token');
+        const result = await res.json();
+        setStatsData(result.data);
+      } catch (err) {
+        setError("Failed to load stats");
+      }
+    };
+
+    fetchStats();
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
     setIsLoggedIn(false);
-}
-
+  };
 
   const handleGetLocation = () => {
-    navigate('/location')
+    navigate("/location");
   };
 
   const handleLogin = () => {
-    navigate('/login')
+    navigate("/login");
   };
 
   const stats = [
-    { icon: Battery, label: 'Available', value: '12', suffix: 'stations' },
-    { icon: Zap, label: 'Fast Charge', value: '8', suffix: 'DC ports' },
-    { icon: Clock, label: 'Avg Wait', value: '5', suffix: 'mins' },
+    {
+      label: "Stations",
+      value: statsData?.totalStations,
+      suffix: "stations",
+      icon: Battery,
+    },
+    // {
+    //   label: "Connectors",
+    //   value: statsData?.connectorTypeCount?.length,
+    //   suffix: "types",
+    //   icon: Zap,
+    // },
+    {
+      label: "Status",
+      value: statsData?.usercharged,
+      suffix: "now",
+      icon: Clock,
+    },
+    {
+      label: "Total charges",
+      value: "Live",
+      suffix: "now",
+      icon: Battery,
+    },
   ];
 
   return (
@@ -167,8 +223,59 @@ const handleLogout =()=>{
         }
       `}</style>
 
+      <div className="fixed top-6 right-6 z-50 animate-slide-up">
+        <button
+          onClick={handleLogout}
+          className="ev-glass px-6 py-3 rounded-xl font-semibold text-slate-900 hover:bg-white/90 transition-all flex items-center gap-2 shadow-lg"
+        >
+          <LogOut className="w-5 h-5" />
+          Logout
+        </button>
+      </div>
+
       {/* Login Button - Fixed top right */}
-       <div className="fixed top-6 right-6 z-50 animate-slide-up">
+    {token && (
+  <div className="fixed top-6 left-6 z-50 animate-slide-up flex items-center gap-3">
+    {/* User Profile Button */}
+    <button
+      onClick={() => navigate('/profile')}
+      className="group flex items-center gap-2 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg border border-emerald-200 hover:shadow-xl hover:scale-105 hover:border-emerald-400 transition-all cursor-pointer"
+    >
+      <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-full flex items-center justify-center group-hover:from-emerald-600 group-hover:to-emerald-700 transition-all">
+        <User className="w-4 h-4 text-white" />
+      </div>
+      {userName && (
+        <span className="text-slate-700 font-medium group-hover:text-emerald-700 transition-colors">
+          {userName}
+        </span>
+      )}
+      <ChevronRight className="w-4 h-4 text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+    </button>
+
+    {/* My Requests Button */}
+    <button
+      onClick={() => navigate('/myrequests')}
+      className="group flex items-center gap-2 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg border border-purple-200 hover:shadow-xl hover:scale-105 hover:border-purple-400 transition-all cursor-pointer"
+    >
+      <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center group-hover:from-purple-600 group-hover:to-purple-700 transition-all">
+        <Clock className="w-4 h-4 text-white" />
+      </div>
+      <span className="text-slate-700 font-medium group-hover:text-purple-700 transition-colors">
+        My Requests
+      </span>
+      <ChevronRight className="w-4 h-4 text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+    </button>
+  </div>
+)}
+
+{!token && (
+  <div className="fixed top-6 left-6 z-50 animate-slide-up">
+    <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-full flex items-center justify-center shadow-lg">
+      <User className="w-5 h-5 text-white" />
+    </div>
+  </div>
+)}
+      <div className="fixed top-6 right-6 z-50 animate-slide-up">
         {isLoggedIn ? (
           <button
             onClick={handleLogout}
@@ -191,7 +298,10 @@ const handleLogout =()=>{
       {/* Map Layer */}
       {location && (
         <div className="absolute inset-0 z-0 animate-fade-in">
-          <LocationMap latitude={location.latitude} longitude={location.longitude} />
+          <LocationMap
+            latitude={location.latitude}
+            longitude={location.longitude}
+          />
         </div>
       )}
 
@@ -204,8 +314,11 @@ const handleLogout =()=>{
       )}
 
       {/* UI Overlay */}
-      <div className={`relative z-10 flex flex-col min-h-screen transition-all duration-500 ${location ? 'justify-start' : 'justify-center'}`}>
-        
+      <div
+        className={`relative z-10 flex flex-col min-h-screen transition-all duration-500 ${
+          location ? "justify-start" : "justify-center"
+        }`}
+      >
         {/* Header - Only when map is showing */}
         {location && (
           <header className="p-4 animate-slide-up">
@@ -216,7 +329,8 @@ const handleLogout =()=>{
               <div className="flex-1">
                 <h1 className="font-bold text-slate-900">EV Charge Finder</h1>
                 <p className="text-xs text-slate-600 font-mono">
-                  {location.latitude.toFixed(4)}°, {location.longitude.toFixed(4)}°
+                  {location.latitude.toFixed(4)}°,{" "}
+                  {location.longitude.toFixed(4)}°
                 </p>
               </div>
               <button
@@ -235,6 +349,7 @@ const handleLogout =()=>{
         )}
 
         {/* Main Content - Before Location */}
+
         {!location && (
           <div className="px-6 py-12 max-w-lg mx-auto w-full animate-slide-up">
             {/* Logo & Title */}
@@ -244,7 +359,7 @@ const handleLogout =()=>{
                 <div className="ev-icon-container w-20 h-20 rounded-2xl flex items-center justify-center mx-auto animate-float">
                   <Zap className="w-10 h-10 text-white charging-bolt" />
                 </div>
-                
+
                 {/* Animated charging bolts moving from top to bottom */}
                 <div className="charging-icon-drop charging-drop">
                   <Zap className="w-6 h-6 text-emerald-500" />
@@ -267,17 +382,20 @@ const handleLogout =()=>{
 
             {/* Stats Cards */}
             <div className="grid grid-cols-3 gap-3 mb-8">
-              {stats.map((stat, index) => (
-                <div 
-                  key={stat.label} 
-                  className="ev-stat-card text-center"
-                  style={{ animationDelay: `${index * 100}ms` }}
-                >
-                  <stat.icon className="w-5 h-5 text-emerald-500 mx-auto mb-2" />
-                  <div className="text-2xl font-bold text-slate-900">{stat.value}</div>
-                  <div className="text-xs text-slate-600">{stat.suffix}</div>
-                </div>
-              ))}
+              {statsData &&
+                stats.map((stat, index) => (
+                  <div
+                    key={stat.label}
+                    className="ev-stat-card text-center"
+                    style={{ animationDelay: `${index * 100}ms` }}
+                  >
+                    <stat.icon className="w-5 h-5 text-emerald-500 mx-auto mb-2" />
+                    <div className="text-2xl font-bold text-slate-900">
+                      {stat.value}
+                    </div>
+                    <div className="text-xs text-slate-600">{stat.suffix}</div>
+                  </div>
+                ))}
             </div>
 
             {/* Error Alert */}
@@ -310,11 +428,11 @@ const handleLogout =()=>{
             {/* Feature List */}
             <div className="mt-10 space-y-3">
               {[
-                'Real-time availability updates',
-                'Filter by connector type',
-                'Navigate to station'
+                "Real-time availability updates",
+                "Filter by connector type",
+                "Navigate to station",
               ].map((feature) => (
-                <div 
+                <div
                   key={feature}
                   className="flex items-center gap-3 text-slate-600"
                 >
@@ -330,6 +448,6 @@ const handleLogout =()=>{
       </div>
     </div>
   );
-};
+}
 
 export default Home;

@@ -39,7 +39,8 @@ function PaymentSuccess() {
         name: user.name,
         email: user.email,
         phone: user.phone || 'N/A',
-        evModel: user.evModel || 'N/A'
+        evModel: user.evModel || 'N/A',
+        roles :user.roles || 'N/A'
       },
       
       // Station Details (from host's evStation)
@@ -47,6 +48,7 @@ function PaymentSuccess() {
         name: host.evStation?.name || 'N/A',
         address: host.evStation?.address || 'N/A',
         power: session?.chargerType || 'N/A',
+        priceperunit:host.evStation?.chargingPricePerUnit || 'N/A',
         connectorType: session?.connectorType || 'Type 2',
         chargerNumber: session?.chargerNumber || 'N/A',
         availableChargers: host.evStation?.availableChargers || 0
@@ -66,7 +68,7 @@ function PaymentSuccess() {
         energyConsumed: `${session.energyConsumed || 0} kWh`,
         startTime: formatTime(session.startTime),
         endTime: formatTime(session.endTime),
-        ratePerUnit: `₹${session.totalCost || 0}/kWh`,
+        ratePerUnit: `₹${session.totalCost || 0}/perunit`,
         date: formatDate(session.startTime || new Date())
       }
     };
@@ -148,7 +150,7 @@ function PaymentSuccess() {
   };
 
   const handleGoHome = () => {
-    navigate('/home');
+    navigate('/');
   };
 
   // Loading state
@@ -307,6 +309,10 @@ function PaymentSuccess() {
                 <p className="text-xs text-slate-500 mb-1">Name</p>
                 <p className="font-semibold text-slate-900">{paymentData.user.name}</p>
               </div>
+               <div>
+                <p className="text-xs text-slate-500 mb-1">role</p>
+                <p className="font-semibold text-slate-900">{paymentData.user.roles}</p>
+              </div>
               <div>
                 <p className="text-xs text-slate-500 mb-1">Email</p>
                 <p className="font-semibold text-slate-900">{paymentData.user.email}</p>
@@ -348,8 +354,12 @@ function PaymentSuccess() {
                     <p className="font-semibold text-slate-900 text-sm">⚡ {paymentData.station.power}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-slate-500 mb-1">Charger</p>
-                    <p className="font-semibold text-slate-900 text-sm">🔌 {paymentData.station.chargerNumber}</p>
+                    <p className="text-xs text-slate-500 mb-1">Chargers</p>
+                    <p className="font-semibold text-slate-900 text-sm">🔌 {paymentData.station.availableChargers}</p>
+                  </div>
+                    <div>
+                    <p className="text-xs text-slate-500 mb-1">priceperunit</p>
+                    <p className="font-semibold text-slate-900 text-sm">🔌 {paymentData.station.priceperunit}</p>
                   </div>
                 </div>
                 <div>

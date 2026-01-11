@@ -190,9 +190,22 @@ function Location() {
       const stationsData = res.data.nearbyStations || [];
       setStations(stationsData);
       setIsSavingLocation(false);
+       // Check if no stations found
+    if (stationsData.length === 0) {
+      // Show alert and option to retry
+      const retry = window.confirm(
+        "No charging stations found within 5km of your location.\n\nWould you like to select a different location?"
+      );
+      
+      if (retry) {
+        // Go back to location selection
+        setLocationStep("selecting");
+      }
+    }
     } catch (err) {
       console.error("Failed to fetch stations", err);
       setIsSavingLocation(false);
+      
     }
   };
 

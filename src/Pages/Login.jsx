@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Mail, Lock, Phone, Eye, EyeOff, Zap, ArrowRight } from "lucide-react";
 import axios from 'axios'
 import { useNavigate } from "react-router-dom";
+import toast, { Toaster } from 'react-hot-toast';
+
 
 function Login() {
   const navigate =useNavigate()
@@ -12,6 +14,8 @@ function Login() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  
+
   const handleLogin = async (e) => {
   e.preventDefault();
   setIsLoading(true);
@@ -21,18 +25,24 @@ function Login() {
     // Make the API call with await
     const res = await axios.post("http://localhost:5000/api/auth/login", { 
       email, 
-      password 
+      password ,
+      phone
     });
     
     console.log(res, 'res');
     
     if (res.data.success) {
       localStorage.setItem("token", res.data.token);
-      navigate("/"); 
+      toast.success('Login successful! Welcome back.', {
+          duration: 5000,
+          position: 'top-right',
+        });
+        setTimeout(()=>{
+          navigate("/",{state:{name:res.data.data.name}}); 
+        },1000)
     }
   } catch (err) {
     console.error(err);
-    setError(err.response?.data?.message || "Invalid email or password");
   } finally {
     setIsLoading(false);
   }
@@ -40,6 +50,7 @@ function Login() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-50 via-white to-teal-50 px-4 py-8 relative overflow-hidden">
+      <Toaster /> 
       <style>{`
         @keyframes float {
           0%, 100% { transform: translateY(0px) rotate(0deg); }
@@ -166,9 +177,10 @@ function Login() {
                 <Phone className="w-5 h-5 text-slate-400 mr-3" />
                 <input
                   type="tel"
-                  placeholder="+1 (555) 000-0000"
+                  placeholder="+91 555 0000000"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
+                   onKeyPress={(e) => e.key === 'Enter' && handleLogin(e)}
                   className="w-full bg-transparent outline-none text-slate-900 placeholder:text-slate-400"
                 />
               </div>

@@ -20,7 +20,7 @@ function HostLogin() {
     if (token && role === "host") {
       navigate("/hostrequests"); // auto redirect
     }
-  }, [navigate]);
+  }, [navigate]); 
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -41,7 +41,7 @@ function HostLogin() {
       );
       
       
-      console.log(res,"ress");
+      console.log(res,"resssssssssss");
       const { token, role } = res.data;
 
       // ❌ If not host
@@ -54,6 +54,8 @@ function HostLogin() {
       // ✅ SAVE HOST TOKEN SAFELY
       // localStorage.setItem("hostToken", token);
       localStorage.setItem("role", role);
+      localStorage.setItem("hosttoken", token);
+
 
       navigate("/hostrequests");
     } catch (error) {
