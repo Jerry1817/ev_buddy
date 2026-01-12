@@ -20,7 +20,7 @@ function HostLogin() {
     if (token && role === "host") {
       navigate("/hostrequests"); // auto redirect
     }
-  }, [navigate]);
+  }, [navigate]); 
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -39,21 +39,23 @@ function HostLogin() {
           password: formData.password,
         }
       );
-
+      
+      
+      console.log(res,"resssssssssss");
       const { token, role } = res.data;
 
       // ❌ If not host
-      if (role !== "host") {
+      if (role !== "HOST") {
         alert("This account is not registered as a host");
         setLoading(false);
         return;
       }
 
       // ✅ SAVE HOST TOKEN SAFELY
-      localStorage.setItem("hostToken", token);
+      // localStorage.setItem("hostToken", token);
       localStorage.setItem("role", role);
+      localStorage.setItem("hosttoken", token);
 
-      alert("Host login successful ⚡🏠");
 
       navigate("/hostrequests");
     } catch (error) {

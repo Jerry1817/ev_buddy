@@ -1,10 +1,10 @@
 import { Routes, Route } from "react-router-dom";
+import "leaflet/dist/leaflet.css";
 import "./App.css";
 
 import Login from "./Pages/Login";
 import Register from "./Pages/Register";
 import UserRegister from "./Pages/UserRegister";
-import Home from "./Pages/Home";
 import HostRegister from "./Pages/HostRegister";
 import Profile from "./Pages/Profile";
 import HostChargingSetup from "./Pages/HostChargingSetup";
@@ -17,36 +17,51 @@ import Edit from "./Pages/Edit";
 import Navigation from "./Pages/Navigation";
 import Charging from "./Pages/Charging";
 import Payment from "./Pages/Payment";
-import AdminHome from "./Adimin/Pages/Home";
+// import AdminHome from "./Adimin/Pages/Home";
 import UserRequests from "./Pages/UserRequests";
 import ProtectedRoute from "./components/ProtectedRoute";
 import StationDetail from "./Pages/StationDetail"; // ✅ FIXED PATH
 import HostLogin from "./Pages/HostLogin";
+import Nearbylocation from "./Pages/Nearby";
+import Location from "./Pages/Location";
+import Home from "./components/Home";
+import PaymentSuccess from "./Pages/PaymentSuccess";
+
 function App() {
   return (
     <Routes>
       {/* 🔓 AUTH ROUTES */}
-      <Route path="/" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/userregister" element={<UserRegister />} />
+      <Route path="/Login" element={<Login />} />
+      <Route path="/" element={<Home />} />
 
       {/* 🔐 USER ROUTES */}
       <Route
-        path="/home"
+        path="/location"
         element={
           <ProtectedRoute>
-            <Home />
+            <Location />
           </ProtectedRoute>
         }
       />
       <Route
-  path="/myrequests"
-  element={
-    <ProtectedRoute>
-      <UserRequests />
-    </ProtectedRoute>
-  }
-/>
+        path="/nearby"
+        element={
+          <ProtectedRoute>
+            <Nearbylocation />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/myrequests"
+        element={
+          <ProtectedRoute>
+            <UserRequests />
+          </ProtectedRoute>
+        }
+      />
       <Route
         path="/profile"
         element={
@@ -70,6 +85,14 @@ function App() {
         element={
           <ProtectedRoute>
             <Payment />
+          </ProtectedRoute>
+        }
+      />
+        <Route
+        path="/paymentsuccess"
+        element={
+          <ProtectedRoute>
+            <PaymentSuccess/>
           </ProtectedRoute>
         }
       />
@@ -112,7 +135,7 @@ function App() {
         }
       />
 
-          <Route path="/host/login" element={<HostLogin />} />
+      <Route path="/host/login" element={<HostLogin />} />
 
       <Route
         path="/hostrequests"
@@ -139,14 +162,14 @@ function App() {
       <Route path="/edit" element={<Edit />} />
 
       {/* 🔐 ADMIN */}
-      <Route
+      {/* <Route
         path="/admin/dashboard"
         element={
           <ProtectedRoute>
             <AdminHome />
           </ProtectedRoute>
         }
-      />
+      /> */}
     </Routes>
   );
 }

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { IoArrowBackOutline } from "react-icons/io5";
 
 function HostRequests() {
   const [requests, setRequests] = useState([]);
@@ -9,31 +10,32 @@ function HostRequests() {
 
   /* 🔐 AUTH CHECK + FETCH */
   useEffect(() => {
-    const token = localStorage.getItem("hostToken");
+    const token = localStorage.getItem("hosttoken");
     const role = localStorage.getItem("role");
 
-    if (!token || role !== "host") {
+    if (!token || role !== "HOST") {
       alert("Please login as host");
       navigate("/host/login");
       return;
     }
 
     fetchRequests(token);
-  }, [navigate]);
+  }, []);
 
   /* 📥 FETCH HOST REQUESTS */
   const fetchRequests = async (token) => {
     try {
       const res = await axios.get(
-        "http://localhost:5000/api/charging-request/host",
-        {
+        "http://localhost:5000/api/host/allrequests",{
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${token}`
           },
         }
       );
+      console.log(res,"ress");
+      
 
-      setRequests(res.data);
+      setRequests(res.data.requests);
     } catch (error) {
       console.error(error);
       alert("Failed to load requests");
@@ -42,42 +44,48 @@ function HostRequests() {
     }
   };
 
-  /* ✅ ACCEPT REQUEST */
+  /*  ACCEPT REQUEST */
   const acceptRequest = async (requestId) => {
+        const token = localStorage.getItem("hosttoken");
+
     try {
-      await axios.post(
-        `http://localhost:5000/api/charging-request/accept/${requestId}`,
+      await axios.patch(
+        `http://localhost:5000/api/chargingrequest/accept/${requestId}`,
         {},
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("hostToken")}`,
+            Authorization: `Bearer ${token}`,
           },
         }
       );
 
       alert("Request accepted");
-      fetchRequests(localStorage.getItem("hostToken"));
+      fetchRequests(token);
     } catch (error) {
       console.error(error);
       alert("Failed to accept request");
     }
   };
 
-  /* ❌ REJECT REQUEST */
+  /*  REJECT REQUEST */
   const rejectRequest = async (requestId) => {
+    console.log(requestId,"requestId");
+    
+        const token = localStorage.getItem("hosttoken");
+        console.log(token,"token");
     try {
-      await axios.post(
-        `http://localhost:5000/api/charging-request/reject/${requestId}`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("hostToken")}`,
-          },
-        }
-      );
+      await axios.patch(
+  `http://localhost:5000/api/chargingrequest/reject/${requestId}`,
+  {}, 
+  {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }
+);
 
       alert("Request rejected");
-      fetchRequests(localStorage.getItem("hostToken"));
+      fetchRequests(token);;
     } catch (error) {
       console.error(error);
       alert("Failed to reject request");
@@ -88,67 +96,115 @@ function HostRequests() {
     return <p className="p-4">Loading requests...</p>;
   }
 
-  return (
-    <div className="min-h-screen bg-slate-100 p-4 font-[Poppins]">
-      <h2 className="text-xl font-semibold mb-4">Host Requests</h2>
+return (
+  <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6 font-[Poppins]">
+    <div className="max-w-4xl mx-auto ">
+        <button
+        onClick={() => navigate(-1)} 
+        className="flex items-center gap-2 text-slate-600 hover:text-slate-900 mb-4 font-medium transition-colors"
+      >
+        <span className="text-xl">←</span>
+        <span>Back</span>
+      </button>
+      <h2 className="text-2xl font-bold text-slate-900 mb-6 ">
+        📋 Charging Requests
+      </h2>
 
-      {requests.length === 0 && (
-        <p className="text-gray-500">No charging requests yet</p>
-      )}
-
-      {requests.map((req) => (
-        <div
-          key={req._id}
-          className="bg-white rounded-xl shadow p-4 mb-4"
-        >
-          <p className="font-semibold">
-            User: {req.userId?.name}
-          </p>
-          <p className="text-sm text-gray-600">
-            📧 {req.userId?.email}
-          </p>
-          <p className="text-sm text-gray-600">
-            📞 {req.userId?.phone}
-          </p>
-
-          <hr className="my-2" />
-
-          <p className="text-sm">
-            🔌 Station: {req.stationId?.name}
-          </p>
-          <p className="text-sm text-gray-600">
-            {req.stationId?.address}
-          </p>
-
-          <p className="mt-2 text-sm">
-            Status:{" "}
-            <span className="font-semibold text-orange-500">
-              {req.status}
-            </span>
-          </p>
-
-          {/* 🎯 ACTION BUTTONS */}
-          {req.status === "pending" && (
-            <div className="flex gap-3 mt-4">
-              <button
-                onClick={() => acceptRequest(req._id)}
-                className="flex-1 bg-emerald-600 text-white py-2 rounded-lg font-medium hover:bg-emerald-700"
-              >
-                Accept
-              </button>
-
-              <button
-                onClick={() => rejectRequest(req._id)}
-                className="flex-1 bg-red-500 text-white py-2 rounded-lg font-medium hover:bg-red-600"
-              >
-                Reject
-              </button>
-            </div>
-          )}
+      {requests.length === 0 ? (
+        <div className="bg-white rounded-2xl shadow-sm p-12 text-center">
+          <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span className="text-4xl">📭</span>
+          </div>
+          <p className="text-slate-500 text-lg">No charging requests yet</p>
+          <p className="text-slate-400 text-sm mt-2">New requests will appear here</p>
         </div>
-      ))}
+      ) : (
+        <div className="space-y-4">
+          {requests.map((req) => (
+            <div
+              key={req._id}
+              className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow p-6 border border-slate-200"
+            >
+              {/* Driver Info */}
+              <div className="flex items-start justify-between mb-4">
+                <div>
+                  <p className="text-lg font-bold text-slate-900">
+                    👤 {req.driver?.name}
+                  </p>
+                  {req.driver?.email && (
+                    <p className="text-sm text-slate-600 mt-1">
+                      ✉️ {req.driver.email}
+                    </p>
+                  )}
+                  {req.driver?.phone && (
+                    <p className="text-sm text-slate-600 mt-1">
+                      📞 {req.driver.phone}
+                    </p>
+                  )}
+                </div>
+                
+                {/* Status Badge */}
+                <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                  req.status === 'pending' ? 'bg-orange-100 text-orange-700' :
+                  req.status === 'accepted' ? 'bg-green-100 text-green-700' :
+                  'bg-red-100 text-red-700'
+                }`}>
+                  {req.status.toUpperCase()}
+                </span>
+              </div>
+
+              {/* Location */}
+              {req.driver?.location?.coordinates && (
+                
+                 <a href={`https://www.google.com/maps?q=${req.driver.location.coordinates[1]},${req.driver.location.coordinates[0]}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700 font-medium bg-blue-50 px-4 py-2 rounded-lg hover:bg-blue-100 transition-colors mb-4"
+                >
+                  📍 View Driver Location
+                  <span className="text-xs">→</span>
+                </a>
+              )}
+
+              <hr className="my-4 border-slate-200" />
+
+              {/* Station Info */}
+              <div className="bg-slate-50 rounded-xl p-4 mb-4">
+                <p className="text-sm font-semibold text-slate-900 mb-1">
+                  🔌 {req.host?.evStation?.name}
+                </p>
+                {req.stationId?.address && (
+                  <p className="text-xs text-slate-600">
+                    {req.stationId.address}
+                  </p>
+                )}
+              </div>
+
+              {/* Action Buttons */}
+              {req.status === "pending" && (
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => acceptRequest(req._id)}
+                    className="flex-1 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white py-3 rounded-xl font-semibold hover:from-emerald-700 hover:to-emerald-800 transition-all shadow-md hover:shadow-lg"
+                  >
+                    ✓ Accept Request
+                  </button>
+
+                  <button
+                    onClick={() => rejectRequest(req._id)}
+                    className="flex-1 bg-gradient-to-r from-red-500 to-red-600 text-white py-3 rounded-xl font-semibold hover:from-red-600 hover:to-red-700 transition-all shadow-md hover:shadow-lg"
+                  >
+                    ✗ Reject
+                  </button>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
-  );
+  </div>
+);
 }
 
 export default HostRequests;
