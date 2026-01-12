@@ -24,6 +24,8 @@ function HostRequests() {
 
   /* 📥 FETCH HOST REQUESTS */
   const fetchRequests = async (token) => {
+    console.log(token,"token");
+    
     try {
       const res = await axios.get(
         "http://localhost:5000/api/host/allrequests",{

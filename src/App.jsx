@@ -96,6 +96,14 @@ function App() {
           </ProtectedRoute>
         }
       />
+       <Route
+        path="/review/:requestId"
+        element={
+          <ProtectedRoute>
+            <PaymentSuccess/>
+          </ProtectedRoute>
+        }
+      />
 
       <Route
         path="/navigation"
