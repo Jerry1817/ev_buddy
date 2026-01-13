@@ -1,120 +1,646 @@
-// src/pages/Profile.jsx
-import React from "react";
+import { useEffect, useState } from "react";
+import {
+  User,
+  Edit3,
+  Zap,
+  Wallet,
+  Users,
+  HelpCircle,
+  Shield,
+  LogOut,
+  ChevronRight,
+  Award,
+  Activity,
+  Bell,
+  Settings,
+  MapPin,
+  Phone,
+  Mail,
+  MessageSquare,
+  X,
+  Camera,
+  Save
+} from "lucide-react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export default function Profile() {
+
+const navigate=useNavigate()
+
+
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("")
+  const [isSaving, setIsSaving] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    address: "",
+    vehicleModel: "",
+    vehicleReg: ""
+  }); 
+  
+  console.log(user?.name,"user");
+
+    useEffect(() => {
+    if (user) {
+      setFormData({
+        name: user.name || "",
+        phone: user.phone || "",
+        email: user.email || "",
+        address: "",
+        vehicleModel: "",
+        vehicleReg: "",
+      });
+    }
+  }, [user]);
+  
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) return;
+        
+        const res = await axios.get("http://localhost:5000/api/auth/me", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        
+        setUser(res.data.data);
+      
+        
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchUser();
+  }, []);
+  
+  
+  if (loading) {
+    return <p className="text-center text-slate-500">Loading profile...</p>;
+  }  
+  
+  if (error) {
+    return <p className="text-center text-red-500">{error}</p>;
+  }
+
+
+if (!user){
+  return null; 
+}
+
+  
+  const handleInputChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+  
+  const handleSaveProfile = async () => {
+    setIsSaving(true);
+    // Simulate API call
+    setTimeout(() => {
+      setIsSaving(false);
+      setIsEditModalOpen(false);
+      // You can add toast notification here
+      alert("Profile updated successfully!");
+    }, 1500);
+  };
+  
+  
+  
+  
   return (
-    <div className="min-h-[90vh] bg-[#e8f9f0] px-5 py-5 text-[#1b1b1b] font-['Inter','Poppins',sans-serif]">
-      {/* Header Section */}
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-center bg-white rounded-xl p-4 shadow-[0_4px_12px_rgba(0,0,0,0.05)] border border-[#e0e6e0] mb-6">
-        <div className="flex items-center gap-4 mb-3 md:mb-0">
-          <img
-            src="https://via.placeholder.com/60"
-            alt="user"
-            className="w-[70px] h-[70px] rounded-full object-cover border-[3px] border-[#2ecc71] bg-[#fafafa] shadow-[0_2px_10px_rgba(46,204,113,0.2)]"
-          />
-          <div>
-            <h2 className="text-[18px] font-bold m-0 text-[#1b1b1b]">
-              Muhammed Hashim. K
-            </h2>
-            <p className="text-[14px] text-[#5f5f5f] mt-1 mb-1">
-              +91-8136991817
-            </p>
-            <a
-              href="/edit"
-              className="text-[13px] font-semibold text-[#27ae60] hover:text-[#2ecc71] transition-colors"
-            >
-              Edit Profile ➜
-            </a>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+      <style>{`
+        @keyframes slide-up {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes fade-in {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+
+        .animate-slide-up {
+          animation: slide-up 0.5s ease-out;
+        }
+
+        .animate-fade-in {
+          animation: fade-in 0.3s ease-out;
+        }
+
+        .profile-card {
+          transition: all 0.3s ease;
+        }
+
+        .profile-card:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        }
+
+        .menu-item {
+          transition: all 0.2s ease;
+        }
+
+        .menu-item:hover {
+          transform: translateX(4px);
+          background: linear-gradient(135deg, #059669 0%, #047857 100%);
+          color: white;
+        }
+
+        .menu-item:hover .icon-bg {
+          background: rgba(255, 255, 255, 0.2);
+        }
+
+        .menu-item:hover svg {
+          color: white;
+        }
+
+        .stat-card {
+          background: white;
+          border-radius: 16px;
+          padding: 20px;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+          transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 8px 20px rgba(5, 150, 105, 0.15);
+        }
+
+        .modal-overlay {
+          position: fixed;
+          inset: 0;
+          background: rgba(0, 0, 0, 0.5);
+          backdrop-filter: blur(4px);
+          z-index: 1000;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 20px;
+          animation: fade-in 0.2s ease-out;
+        }
+
+        .modal-content {
+          background: white;
+          border-radius: 24px;
+          width: 100%;
+          max-width: 500px;
+          max-height: 90vh;
+          overflow-y: auto;
+          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+          animation: slide-up 0.3s ease-out;
+        }
+
+        .modal-content::-webkit-scrollbar {
+          width: 6px;
+        }
+
+        .modal-content::-webkit-scrollbar-track {
+          background: #f1f1f1;
+          border-radius: 10px;
+        }
+
+        .modal-content::-webkit-scrollbar-thumb {
+          background: #059669;
+          border-radius: 10px;
+        }
+
+        .input-group {
+          margin-bottom: 20px;
+        }
+
+        .input-group label {
+          display: block;
+          font-size: 14px;
+          font-weight: 600;
+          color: #334155;
+          margin-bottom: 8px;
+        }
+
+        .input-group input {
+          width: 100%;
+          padding: 12px 16px;
+          border: 2px solid #e2e8f0;
+          border-radius: 12px;
+          font-size: 15px;
+          transition: all 0.2s;
+          box-sizing: border-box;
+        }
+
+        .input-group input:focus {
+          outline: none;
+          border-color: #059669;
+          box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+        }
+      `}</style>
+
+      {/* Header with Profile */}
+      <div className="bg-gradient-to-r from-emerald-500 to-emerald-600 px-6 pt-8 pb-24 animate-fade-in">
+        <div className="max-w-4xl mx-auto">
+          {/* Top Actions */}
+          {/* <div className="flex justify-between items-center mb-8">
+            <button className="p-2 bg-white/20 backdrop-blur-sm rounded-xl text-white hover:bg-white/30 transition-all">
+              <Settings className="w-5 h-5" />
+            </button>
+            <button className="p-2 bg-white/20 backdrop-blur-sm rounded-xl text-white hover:bg-white/30 transition-all relative">
+              <Bell className="w-5 h-5" />
+              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+            </button>
+          </div> */}
+
+          {/* Profile Header */}
+          <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
+            {/* Avatar */}
+            <div className="relative">
+              <div className="w-24 h-24 md:w-28 md:h-28 rounded-full bg-white p-1 shadow-xl">
+                <img
+                  src="https://via.placeholder.com/120"
+                  alt="Profile"
+                  className="w-full h-full rounded-full object-cover"
+                />
+              </div>
+              <div className="absolute bottom-0 right-0 w-9 h-9 bg-white rounded-full flex items-center justify-center shadow-lg">
+                <Zap className="w-5 h-5 text-emerald-500" />
+              </div>
+            </div>
+
+            {/* Profile Info */}
+            <div className="flex-1 text-center md:text-left">
+              <div className="flex flex-col md:flex-row md:items-center gap-3 mb-3">
+                <h1 className="text-2xl md:text-3xl font-bold text-white">
+                  {user.name}
+                </h1>
+                <span className="inline-flex items-center gap-1 bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-semibold">
+                  <Award className="w-4 h-4" />
+                  Gold Member
+                </span>
+              </div>
+
+              <div className="flex flex-col md:flex-row gap-4 text-emerald-50 text-sm mb-4">
+                <div className="flex items-center gap-2 justify-center md:justify-start">
+                  <Phone className="w-4 h-4" />
+                  {user.phone}
+                </div>
+                <div className="flex items-center gap-2 justify-center md:justify-start">
+                  <Mail className="w-4 h-4" />
+                  {user.email}
+                </div>
+                
+              </div>
+
+              <button className="bg-white text-emerald-600 px-6 py-2.5 rounded-xl font-semibold hover:bg-emerald-50 transition-all shadow-lg flex items-center gap-2 mx-auto md:mx-0"
+                onClick={() => setIsEditModalOpen(true)}>
+                <Edit3 className="w-4 h-4" />
+                Edit Profile
+              </button>
+            </div>
           </div>
         </div>
-
-        <div className="self-end md:self-auto">
-          <img
-            src="https://cdn-icons-png.flaticon.com/512/1000/1000913.png"
-            alt="ev illustration"
-            className="w-20 h-20 opacity-95"
-          />
-        </div>
-      </header>
-
-      {/* My EV Section */}
-      <section className="mb-5">
-        <h3 className="text-[16px] font-bold text-[#27ae60] mb-2">
-          My EVs
-        </h3>
-        <div className="flex items-center gap-3 bg-white rounded-xl px-3 py-3 border border-[#e0e6e0] shadow-[0_4px_12px_rgba(0,0,0,0.05)] w-fit md:w-fit hover:-translate-y-0.5 hover:shadow-[0_6px_16px_rgba(46,204,113,0.15)] transition">
-          <img
-            src="https://cdn.pixabay.com/photo/2021/05/20/12/23/electric-scooter-6267250_1280.png"
-            alt="Ather 450 Apex"
-            className="w-[90px] h-[60px] object-contain"
-          />
-          <p className="font-semibold text-[#1b1b1b] m-0">
-            ATHER • 450 Apex
-          </p>
-        </div>
-      </section>
-
-      {/* Wallet Section */}
-      <section className="mb-5">
-        <div className="flex justify-between items-center bg-white rounded-xl px-4 py-3 border border-[#e0e6e0] shadow-[0_4px_12px_rgba(0,0,0,0.05)] hover:-translate-y-0.5 hover:shadow-[0_6px_16px_rgba(46,204,113,0.15)] transition">
-          <div className="flex items-center gap-2 font-semibold">
-            <span className="bg-[#2ecc71] text-white text-[18px] rounded-lg w-9 h-9 flex items-center justify-center">
-              💳
-            </span>
-            <span>My Wallet</span>
-          </div>
-          <div className="flex items-center gap-1 font-bold text-[#27ae60]">
-            <span>₹0.00</span>
-            <span className="text-lg">›</span>
-          </div>
-        </div>
-      </section>
-
-      {/* General Options */}
-      <section className="mb-6">
-        <h3 className="text-[16px] font-bold text-[#27ae60] mb-2">
-          General
-        </h3>
-        <ul className="list-none p-0 m-0 grid gap-2">
-          <li>
-            <a
-              href="/invite"
-              className="flex items-center gap-3 no-underline text-[#1b1b1b] bg-white rounded-xl px-3 py-3 border border-[#e0e6e0] shadow-[0_4px_12px_rgba(0,0,0,0.05)] transition hover:bg-[#2ecc71] hover:text-white hover:-translate-y-0.5"
-            >
-              <span className="text-[18px]">👥</span>
-              <span>Invite your Friends</span>
-            </a>
-          </li>
-          <li>
-            <a
-              href="/help"
-              className="flex items-center gap-3 no-underline text-[#1b1b1b] bg-white rounded-xl px-3 py-3 border border-[#e0e6e0] shadow-[0_4px_12px_rgba(0,0,0,0.05)] transition hover:bg-[#2ecc71] hover:text-white hover:-translate-y-0.5"
-            >
-              <span className="text-[18px]">🛠️</span>
-              <span>Help and Support</span>
-            </a>
-          </li>
-          <li>
-            <a
-              href="/privacy"
-              className="flex items-center gap-3 no-underline text-[#1b1b1b] bg-white rounded-xl px-3 py-3 border border-[#e0e6e0] shadow-[0_4px_12px_rgba(0,0,0,0.05)] transition hover:bg-[#2ecc71] hover:text-white hover:-translate-y-0.5"
-            >
-              <span className="text-[18px]">🔒</span>
-              <span>Privacy Policy</span>
-            </a>
-          </li>
-        </ul>
-      </section>
-
-      {/* Logout Button */}
-      <div className="flex justify-center mt-5">
-        <button
-          className="bg-gradient-to-r from-[#27ae60] to-[#2ecc71] text-white px-7 py-3 rounded-xl font-bold cursor-pointer shadow-[0_4px_10px_rgba(46,204,113,0.3)] transition transform hover:from-[#2ecc71] hover:to-[#27ae60] hover:scale-[1.03] border-none"
-        >
-          ⎋ Logout
-          
-        </button>
       </div>
+
+      {/* Stats Cards - Overlapping */}
+      <div className="max-w-4xl mx-auto px-6 -mt-16 mb-6 animate-slide-up">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Total Charges */}
+          <div className="stat-card">
+            <div className="flex items-center justify-between mb-3">
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
+                <Zap className="w-6 h-6 text-white" />
+              </div>
+              <span className="text-xs text-slate-500 font-medium">This Month</span>
+            </div>
+            <p className="text-2xl font-bold text-slate-900 mb-1">24</p>
+            <p className="text-sm text-slate-600">Total Charges</p>
+          </div>
+
+          {/* Energy Consumed */}
+          <div className="stat-card">
+            <div className="flex items-center justify-between mb-3">
+              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center">
+                <Activity className="w-6 h-6 text-white" />
+              </div>
+              <span className="text-xs text-slate-500 font-medium">Total</span>
+            </div>
+            <p className="text-2xl font-bold text-slate-900 mb-1">342 kWh</p>
+            <p className="text-sm text-slate-600">Energy Used</p>
+          </div>
+
+          {/* Money Saved */}
+          <div className="stat-card">
+            <div className="flex items-center justify-between mb-3">
+              <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center">
+                <Wallet className="w-6 h-6 text-white" />
+              </div>
+              <span className="text-xs text-slate-500 font-medium">vs Petrol</span>
+            </div>
+            <p className="text-2xl font-bold text-slate-900 mb-1">₹4,580</p>
+            <p className="text-sm text-slate-600">Money Saved</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="max-w-4xl mx-auto px-6 pb-24">
+        {/* My EV Section */}
+        <div className="mb-6 animate-slide-up">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-bold text-slate-900">My Electric Vehicle</h2>
+            <button className="text-emerald-600 text-sm font-semibold hover:text-emerald-700 flex items-center gap-1">
+              Add Vehicle
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+
+          <div className="profile-card bg-white rounded-2xl p-5 border border-slate-200 shadow-lg">
+            <div className="flex items-center gap-4">
+              <div className="w-20 h-20 bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-xl flex items-center justify-center">
+                <img
+                  src="https://cdn.pixabay.com/photo/2021/05/20/12/23/electric-scooter-6267250_1280.png"
+                  alt="EV"
+                  className="w-16 h-16 object-contain"
+                />
+              </div>
+              <div className="flex-1">
+                <p className="text-xs text-emerald-600 font-semibold mb-1">ELECTRIC SCOOTER</p>
+                <h3 className="text-lg font-bold text-slate-900 mb-1">ATHER 450 Apex</h3>
+                <p className="text-sm text-slate-500">Reg: KL-XX-XXXX</p>
+              </div>
+              <ChevronRight className="w-5 h-5 text-slate-400" />
+            </div>
+          </div>
+        </div>
+
+        {/* Wallet Section */}
+        <div className="mb-6 animate-slide-up">
+          <div className="profile-card bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-2xl p-6 border border-emerald-400 shadow-lg">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                  <Wallet className="w-7 h-7 text-white" />
+                </div>
+                <div>
+                  <p className="text-emerald-100 text-sm mb-1">Wallet Balance</p>
+                  <p className="text-3xl font-bold text-white">₹0.00</p>
+                </div>
+              </div>
+              <button className="bg-white text-emerald-600 px-5 py-2.5 rounded-xl font-semibold hover:bg-emerald-50 transition-all shadow-lg">
+                Add Money
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Menu Items */}
+        <div className="mb-6 animate-slide-up">
+          <h2 className="text-lg font-bold text-slate-900 mb-4">Quick Actions</h2>
+          <div className="space-y-3">
+            {/* Invite Friends */}
+            <div    onClick={() => navigate("/invite")}
+          className="menu-item bg-white rounded-xl p-4 border border-slate-200 shadow-md cursor-pointer flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="icon-bg w-11 h-11 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl flex items-center justify-center">
+                  <Users className="w-5 h-5 text-blue-600" />
+                </div>
+                <div>
+                  <p className="font-semibold text-slate-900">Invite Friends</p>
+                  <p className="text-xs text-slate-500">Earn rewards together</p>
+                </div>
+              </div>
+              <ChevronRight className="w-5 h-5 text-slate-400" />
+            </div>
+
+            {/* Submit Complaint */}
+            <div    onClick={() => navigate("/complaints")}
+             className="menu-item bg-white rounded-xl p-4 border border-slate-200 shadow-md cursor-pointer flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="icon-bg w-11 h-11 bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl flex items-center justify-center">
+                  <MessageSquare className="w-5 h-5 text-orange-600" />
+                </div>
+                <div>
+                  <p className="font-semibold text-slate-900">Submit Complaint</p>
+                  <p className="text-xs text-slate-500">Report an issue</p>
+                </div>
+              </div>
+              <ChevronRight className="w-5 h-5 text-slate-400" />
+            </div>
+
+            {/* Help & Support */}
+            {/* <div   onClick={() => navigate("/invite")}
+              className="menu-item bg-white rounded-xl p-4 border border-slate-200 shadow-md cursor-pointer flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="icon-bg w-11 h-11 bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl flex items-center justify-center">
+                  <HelpCircle className="w-5 h-5 text-purple-600" />
+                </div>
+                <div>
+                  <p className="font-semibold text-slate-900">Help & Support</p>
+                  <p className="text-xs text-slate-500">Get assistance</p>
+                </div>
+              </div>
+              <ChevronRight className="w-5 h-5 text-slate-400" />
+            </div> */}
+
+            {/* Privacy Policy */}
+            <div   onClick={() => navigate("/privacy")}
+             className="menu-item bg-white rounded-xl p-4 border border-slate-200 shadow-md cursor-pointer flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="icon-bg w-11 h-11 bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl flex items-center justify-center">
+                  <Shield className="w-5 h-5 text-slate-600" />
+                </div>
+                <div>
+                  <p className="font-semibold text-slate-900">Privacy Policy</p>
+                  <p className="text-xs text-slate-500">Terms & conditions</p>
+                </div>
+              </div>
+              <ChevronRight className="w-5 h-5 text-slate-400" />
+            </div>
+          </div>
+        </div>
+
+        {/* Logout Button */}
+        <div className="animate-slide-up">
+          <button className="w-full bg-gradient-to-r from-red-500 to-red-600 text-white py-4 rounded-xl font-bold shadow-lg hover:from-red-600 hover:to-red-700 transition-all flex items-center justify-center gap-2">
+            <LogOut className="w-5 h-5" />
+            Logout
+          </button>
+        </div>
+
+        {/* App Version */}
+        <div className="text-center mt-6 text-sm text-slate-400">
+          <p>EV Charge Finder v1.0.0</p>
+        </div>
+      </div>
+
+      {/* Edit Profile Modal */}
+      {isEditModalOpen && (
+        <div className="modal-overlay" onClick={() => setIsEditModalOpen(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            {/* Modal Header */}
+            <div className="sticky top-0 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white p-6 rounded-t-3xl flex items-center justify-between z-10">
+              <div>
+                <h2 className="text-2xl font-bold mb-1">Edit Profile</h2>
+                <p className="text-emerald-100 text-sm">Update your personal information</p>
+              </div>
+              <button
+                onClick={() => setIsEditModalOpen(false)}
+                className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center hover:bg-white/30 transition-all"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6">
+              {/* Profile Picture */}
+              <div className="text-center mb-6">
+                <div className="relative inline-block">
+                  <div className="w-24 h-24 rounded-full bg-slate-200 overflow-hidden">
+                    <img
+                      src="https://via.placeholder.com/120"
+                      alt="Profile"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <button className="absolute bottom-0 right-0 w-8 h-8 bg-emerald-500 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-emerald-600 transition-all">
+                    <Camera className="w-4 h-4" />
+                  </button>
+                </div>
+                <p className="text-xs text-slate-500 mt-2">Click camera icon to change photo</p>
+              </div>
+
+              {/* Form Fields */}
+              <div className="input-group">
+                <label htmlFor="name">Full Name</label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  placeholder="Enter your full name"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="input-group">
+                  <label htmlFor="phone">Phone Number</label>
+                  <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleInputChange}
+                    placeholder="+91-XXXXXXXXXX"
+                  />
+                </div>
+
+                <div className="input-group">
+                  <label htmlFor="email">Email Address</label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    placeholder="your@email.com"
+                  />
+                </div>
+              </div>
+
+              {/* <div className="input-group">
+                <label htmlFor="address">Address</label>
+                <input
+                  type="text"
+                  id="address"
+                  name="address"
+                  value={formData.address}
+                  onChange={handleInputChange}
+                  placeholder="Enter your address"
+                />
+              </div> */}
+
+              {/* Vehicle Information */}
+              <div className="bg-slate-50 rounded-xl p-4 mb-6">
+                {/* <h3 className="text-sm font-bold text-slate-900 mb-3 flex items-center gap-2">
+                  <Zap className="w-4 h-4 text-emerald-500" />
+                  Vehicle Information
+                </h3> */}
+                
+                {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="input-group mb-0">
+                    <label htmlFor="vehicleModel">Model</label>
+                    <input
+                      type="text"
+                      id="vehicleModel"
+                      name="vehicleModel"
+                      value={formData.vehicleModel}
+                      onChange={handleInputChange}
+                      placeholder="e.g., ATHER 450 Apex"
+                    />
+                  </div>
+
+                  <div className="input-group mb-0">
+                    <label htmlFor="vehicleReg">Registration No.</label>
+                    <input
+                      type="text"
+                      id="vehicleReg"
+                      name="vehicleReg"
+                      value={formData.vehicleReg}
+                      onChange={handleInputChange}
+                      placeholder="e.g., KL-XX-XXXX"
+                    />
+                  </div>
+                </div> */}
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setIsEditModalOpen(false)}
+                  className="flex-1 bg-slate-100 text-slate-700 py-3.5 rounded-xl font-semibold hover:bg-slate-200 transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSaveProfile}
+                  disabled={isSaving}
+                  className="flex-1 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white py-3.5 rounded-xl font-semibold hover:from-emerald-600 hover:to-emerald-700 transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg"
+                >
+                  {isSaving ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      <Save className="w-4 h-4" />
+                      Save Changes
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

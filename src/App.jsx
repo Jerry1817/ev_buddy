@@ -177,7 +177,7 @@ function App() {
       <Route path="/help" element={<HelpSupport />} />
       <Route path="/privacy" element={<PrivacyPolicy />} />
       <Route path="/invite" element={<InviteFriends />} />
-      <Route path="/edit" element={<Edit />} />
+      {/* <Route path="/edit" element={<Edit />} /> */}
 
       {/* 🔐 ADMIN */}
       {/* <Route
