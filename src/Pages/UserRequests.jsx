@@ -734,7 +734,7 @@ function UserRequests() {
         fontWeight: "600",
       }}
     >
-      ✅ Charging completed successfully. Payment confirmed.
+       Charging completed successfully. Payment confirmed.
     </div>
 
     <button

@@ -26,12 +26,14 @@ import Nearbylocation from "./Pages/Nearby";
 import Location from "./Pages/Location";
 import Home from "./components/Home";
 import PaymentSuccess from "./Pages/PaymentSuccess";
+import AddReview from "./Pages/Review";
+import ComplaintForm from "./Pages/Complaint";
 
 function App() {
   return (
     <Routes>
       {/* 🔓 AUTH ROUTES */}
-      <Route path="/register" element={<Register />} />
+      <Route path="/register" element={<Register />} /> 
       <Route path="/userregister" element={<UserRegister />} />
       <Route path="/Login" element={<Login />} />
       <Route path="/" element={<Home />} />
@@ -70,6 +72,14 @@ function App() {
           </ProtectedRoute>
         }
       />
+       <Route
+        path="/complaints"
+        element={
+          <ProtectedRoute>
+            <ComplaintForm/>
+          </ProtectedRoute>
+        }
+      />
       <Route path="/hostlogin" element={<HostLogin />} />
       <Route
         path="/charging"
@@ -100,7 +110,7 @@ function App() {
         path="/review/:requestId"
         element={
           <ProtectedRoute>
-            <PaymentSuccess/>
+            <AddReview/>
           </ProtectedRoute>
         }
       />
