@@ -1,11 +1,22 @@
 import { useState } from "react";
-import { Mail, Lock, Phone, User, Car, Eye, EyeOff, Zap, ArrowRight, CheckCircle2 } from "lucide-react";
+import {
+  Mail,
+  Lock,
+  Phone,
+  User,
+  Car,
+  Eye,
+  EyeOff,
+  Zap,
+  ArrowRight,
+  CheckCircle2,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import toast, { Toaster } from 'react-hot-toast';
+import toast, { Toaster } from "react-hot-toast";
 
 function UserRegister() {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -23,58 +34,60 @@ function UserRegister() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
- const handleSubmit = async (e) => {
-  e.preventDefault();
-  setError("");
-  setLoading(true);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
 
-  try {
-    if (!formData.name || !formData.email || !formData.phone || !formData.password) {
-      toast.error("Please fill all required fields");
-      setLoading(false);
-      return;
-    }
+    try {
+      if (
+        !formData.name ||
+        !formData.email ||
+        !formData.phone ||
+        !formData.password
+      ) {
+        toast.error("Please fill all required fields");
+        setLoading(false);
+        return;
+      }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
-      toast.error("Please enter a valid email address");
-      setLoading(false);
-      return;
-    }
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(formData.email)) {
+        toast.error("Please enter a valid email address");
+        setLoading(false);
+        return;
+      }
 
+      const phoneRegex = /^[0-9]{10}$/;
+      if (!phoneRegex.test(formData.phone)) {
+        toast.error("Please enter a valid 10-digit phone number");
+        setLoading(false);
+        return;
+      }
 
-     const phoneRegex = /^[0-9]{10}$/;
-    if (!phoneRegex.test(formData.phone)) {
-      toast.error("Please enter a valid 10-digit phone number");
-      setLoading(false);
-      return;
-    }
-
-    const res = await axios.post(
-      "http://localhost:5000/api/auth/register",
-      formData
-    );
-
-    if (res.data.success) {
-      toast.success("User registered successfully. Please check your email for OTP verification.", {
-        duration: 4000,
-        position: "top-right",
-      });
-
+      const res = await axios.post(
+        "http://localhost:5000/api/auth/register",
+        formData
+      );
+      console.log(res, "rresss");
       
-      setTimeout(() => navigate("/login"), 1500);
+      if (res.data.success) {
+        toast.success(
+          "User registered successfully. Please check your email for OTP verification.",
+          {
+            duration: 4000,
+            position: "top-right",
+          }
+        );
+        navigate("/otpverification",{state:{email:formData.email}});
     }
-
-  } catch (err) {
-    console.error(err);
-    toast.error(
-      err.response?.data?.message || "Registration failed"
-    );
-  } finally {
-    setLoading(false);
-  }
-};
-
+    } catch (err) {
+      console.error(err);
+      toast.error(err.response?.data?.message || "Registration failed");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const evModels = [
     "Tesla Model 3",
@@ -84,12 +97,12 @@ function UserRegister() {
     "MG ZS EV",
     "Tata Nexon EV",
     "Mahindra e-Verito",
-    "Other"
+    "Other",
   ];
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-50 via-white to-teal-50 px-4 py-8 relative overflow-hidden">
-      <Toaster /> 
+      <Toaster />
       <style>{`
         @keyframes float {
           0%, 100% { transform: translateY(0px) rotate(0deg); }
@@ -248,7 +261,8 @@ function UserRegister() {
             {/* EV Model Select */}
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-2">
-                EV Model <span className="text-slate-400 text-xs">(Optional)</span>
+                EV Model{" "}
+                <span className="text-slate-400 text-xs">(Optional)</span>
               </label>
               <div className="input-focus relative flex items-center border-2 border-slate-200 rounded-xl px-4 py-3 bg-white transition-all duration-200">
                 <Car className="w-5 h-5 text-slate-400 mr-3" />

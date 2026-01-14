@@ -28,17 +28,19 @@ import Home from "./components/Home";
 import PaymentSuccess from "./Pages/PaymentSuccess";
 import AddReview from "./Pages/Review";
 import ComplaintForm from "./Pages/Complaint";
+import OTPVerification from "./Pages/Otp";
 
 function App() {
   return (
     <Routes>
-      {/* 🔓 AUTH ROUTES */}
+      {/*  AUTH ROUTES */}
       <Route path="/register" element={<Register />} /> 
       <Route path="/userregister" element={<UserRegister />} />
       <Route path="/Login" element={<Login />} />
+      <Route path="/otpverification" element={<OTPVerification/>} />
       <Route path="/" element={<Home />} />
 
-      {/* 🔐 USER ROUTES */}
+      {/*  USER ROUTES */}
       <Route
         path="/location"
         element={
@@ -124,7 +126,7 @@ function App() {
         }
       />
 
-      {/* 🔋 STATION DETAIL (NEW – WORKING) */}
+      {/*  STATION DETAIL (NEW – WORKING) */}
       <Route
         path="/station/:id"
         element={
@@ -134,7 +136,7 @@ function App() {
         }
       />
 
-      {/* 🔐 HOST ROUTES */}
+      {/*  HOST ROUTES */}
       <Route
         path="/hostregister"
         element={
@@ -173,13 +175,13 @@ function App() {
         }
       />
 
-      {/* 🔓 INFO PAGES */}
+      {/*  INFO PAGES */}
       <Route path="/help" element={<HelpSupport />} />
       <Route path="/privacy" element={<PrivacyPolicy />} />
       <Route path="/invite" element={<InviteFriends />} />
       {/* <Route path="/edit" element={<Edit />} /> */}
 
-      {/* 🔐 ADMIN */}
+      {/*  ADMIN */}
       {/* <Route
         path="/admin/dashboard"
         element={
