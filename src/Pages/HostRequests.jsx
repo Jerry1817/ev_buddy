@@ -147,8 +147,8 @@ return (
                 
                 {/* Status Badge */}
                 <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                  req.status === 'pending' ? 'bg-orange-100 text-orange-700' :
-                  req.status === 'accepted' ? 'bg-green-100 text-green-700' :
+                  req.status === 'REQUESTED' ? 'bg-orange-100 text-orange-700' :
+                  req.status === 'ACCEPTED' ? 'bg-green-100 text-green-700' :
                   'bg-red-100 text-red-700'
                 }`}>
                   {req.status.toUpperCase()}
@@ -183,7 +183,7 @@ return (
               </div>
 
               {/* Action Buttons */}
-              {req.status === "pending" && (
+              {req.status === "REQUESTED" && (
                 <div className="flex gap-3">
                   <button
                     onClick={() => acceptRequest(req._id)}

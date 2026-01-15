@@ -40,11 +40,10 @@ function HostLogin() {
         }
       );
       
-      
       console.log(res,"resssssssssss");
       const { token, role } = res.data;
 
-      // ❌ If not host
+      // If not host
       if (role !== "HOST") {
         alert("This account is not registered as a host");
         setLoading(false);

@@ -14,14 +14,14 @@ function UserRequests() {
   }, []);
 
   const fetchMyRequests = async () => {
-      setLoading(true);
+    setLoading(true);
 
     try {
       const token = localStorage.getItem("token");
 
       if (!token) {
         alert("Login required");
-          setLoading(false);
+        setLoading(false);
         navigate("/");
         return;
       }
@@ -36,7 +36,6 @@ function UserRequests() {
       );
       console.log(res.data, "oo");
       setRequests(res.data.data);
-      
     } catch (error) {
       console.error(error);
       alert("Failed to load requests");
@@ -45,37 +44,62 @@ function UserRequests() {
     }
   };
 
-  console.log(requests,"requests");
-  
+  console.log(requests, "requests");
+
+  const markArrived = async (requestId) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      await axios.patch(
+        `http://localhost:5000/api/charging/arrived/${requestId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      fetchMyRequests();
+    } catch (err) {
+      alert("Failed to mark arrival");
+    }
+  };
+
   const getStatusColor = (status) => {
     switch (status) {
-      case "pending":
+      case "REQUESTED":
         return "bg-orange-100 text-orange-700 border-orange-200";
-      case "accepted":
+      case "ACCEPTED":
         return "bg-green-100 text-green-700 border-green-200";
-      case "rejected":
+      case "REJECTED":
         return "bg-red-100 text-red-700 border-red-200";
       default:
         return "bg-gray-100 text-gray-700 border-gray-200";
     }
   };
 
- const formatDate = (dateString) => {
-  if (!dateString) return "—";
+  const formatDate = (dateString) => {
+    if (!dateString) return "—";
 
-  const date = new Date(dateString);
+    const date = new Date(dateString);
 
-  return date.toLocaleDateString("en-IN", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  });
-};
+    return date.toLocaleDateString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
+  };
 
+  const statusMap = {
+    pending: "REQUESTED",
+    accepted: "ACCEPTED",
+    rejected: "REJECTED",
+  };
 
   const filteredRequests = requests.filter((req) => {
     if (filter === "all") return true;
-    return req.status === filter;
+    return req.status === statusMap[filter];
   });
 
   const filterOptions = [
@@ -83,17 +107,17 @@ function UserRequests() {
     {
       value: "pending",
       label: "Pending",
-      count: requests.filter((r) => r.status === "pending").length,
+      count: requests.filter((r) => r.status === "REQUESTED").length,
     },
     {
       value: "accepted",
       label: "Accepted",
-      count: requests.filter((r) => r.status === "accepted").length,
+      count: requests.filter((r) => r.status === "ACCEPTED").length,
     },
     {
       value: "rejected",
       label: "Rejected",
-      count: requests.filter((r) => r.status === "rejected").length,
+      count: requests.filter((r) => r.status === "REJECTED").length,
     },
   ];
 
@@ -362,11 +386,13 @@ function UserRequests() {
                   style={{
                     height: "8px",
                     background:
-                      req.status === "pending"
+                      req.status === "REQUESTED"
                         ? "#fb923c"
-                        : req.status === "accepted"
+                        : req.status === "ACCEPTED"
                         ? "#34d399"
-                        : req.status === "rejected"
+                        : req.status === "ARRIVED"
+                        ? "#38bdf8"
+                        : req.status === "ACTIVE"
                         ? "#f87171"
                         : "#60a5fa",
                   }}
@@ -444,9 +470,9 @@ function UserRequests() {
                       className={getStatusColor(req.status)}
                     >
                       <span>
-                        {req.status === "pending"
+                        {req.status === "REQUESTED"
                           ? "🕐"
-                          : req.status === "accepted"
+                          : req.status === "ACCEPTED"
                           ? "✓"
                           : "✗"}
                       </span>
@@ -674,7 +700,7 @@ function UserRequests() {
                   )}
 
                   {/* Status Messages */}
-                  {req.status === "pending" && (
+                  {req.status === "REQUESTED" && (
                     <div
                       style={{
                         background: "#ffedd5",
@@ -698,71 +724,74 @@ function UserRequests() {
                       </div>
                     </div>
                   )}
-{/* Charging Actions & Status */}
-{/* Accepted & not yet paid → show Start Charging */}
-{req.status === "accepted" && req.paymentStatus !== "PAID" && (
-  <button
-    onClick={() => navigate(`/charging/${req._id}`)}
-    style={{
-      width: "100%",
-      background: "linear-gradient(135deg, #059669 0%, #047857 100%)",
-      color: "white",
-      border: "none",
-      padding: "12px",
-      borderRadius: "12px",
-      fontWeight: "600",
-      cursor: "pointer",
-      boxShadow: "0 2px 8px rgba(5,150,105,0.3)",
-      marginBottom: "16px",
-    }}
-  >
-    ▶ Start Charging
-  </button>
-)}
+                  {/* Charging Actions & Status */}
+                  {/* Accepted & not yet paid → show Start Charging */}
+                  {req.status === "ACCEPTED" && (
+                    <button
+                      onClick={() => markArrived(req._id)}
+                      style={{
+                        width: "100%",
+                        background:
+                          "linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)",
+                        color: "white",
+                        border: "none",
+                        padding: "12px",
+                        borderRadius: "12px",
+                        fontWeight: "600",
+                        cursor: "pointer",
+                        marginBottom: "16px",
+                      }}
+                    >
+                      🚗 I’ve Arrived
+                    </button>
+                  )}
 
-{/* Charging completed & paid */}
-{req.paymentStatus === "PAID" && (
-  <>
-    <div
-      style={{
-        background: "#dcfce7",
-        border: "1px solid #bbf7d0",
-        borderRadius: "12px",
-        padding: "12px",
-        marginBottom: "12px",
-        color: "#166534",
-        fontWeight: "600",
-      }}
-    >
-       Charging completed successfully. Payment confirmed.
-    </div>
+                  {/* Charging completed & paid */}
+                  {req.paymentStatus === "PAID" && (
+                    <>
+                      <div
+                        style={{
+                          background: "#dcfce7",
+                          border: "1px solid #bbf7d0",
+                          borderRadius: "12px",
+                          padding: "12px",
+                          marginBottom: "12px",
+                          color: "#166534",
+                          fontWeight: "600",
+                        }}
+                      >
+                        Charging completed successfully. Payment confirmed.
+                      </div>
 
-    <button
-      onClick={() => navigate(`/review/${req._id}`,{
-         state: { 
-      stationData: req.host?.evStation,
-      requestId: req._id 
-    } 
-      })}
-      style={{
-        width: "100%",
-        background: "linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)",
-        color: "white",
-        border: "none",
-        padding: "12px",
-        borderRadius: "12px",
-        fontWeight: "600",
-        cursor: "pointer",
-        boxShadow: "0 2px 8px rgba(79,70,229,0.3)",
-        transition: "all 0.2s",
-      }}
-    >
-      ⭐ Add Review & Rating
-    </button>
-  </>
-)}
+                      <button
+                        onClick={() =>
+                          navigate(`/review/${req._id}`, {
+                            state: {
+                              stationData: req.host?.evStation,
+                              requestId: req._id,
+                            },
+                          })
+                        }
+                        style={{
+                          width: "100%",
+                          background:
+                            "linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)",
+                          color: "white",
+                          border: "none",
+                          padding: "12px",
+                          borderRadius: "12px",
+                          fontWeight: "600",
+                          cursor: "pointer",
+                          boxShadow: "0 2px 8px rgba(79,70,229,0.3)",
+                          transition: "all 0.2s",
+                        }}
+                      >
+                        ⭐ Add Review & Rating
+                      </button>
+                    </>
+                  )}
 
-                  {req.status === "rejected" && (
+                  {req.status === "REJECTED" && (
                     <div
                       style={{
                         background: "#fee2e2",
@@ -802,7 +831,7 @@ function UserRequests() {
 
                   {/* Action Buttons */}
                   <div style={{ display: "flex", gap: "12px" }}>
-                    {req.status === "pending" && (
+                    {req.status === "REQUESTED" && (
                       <button
                         style={{
                           flex: 1,
@@ -820,7 +849,7 @@ function UserRequests() {
                       </button>
                     )}
 
-                    {req.status === "accepted" && (
+                    {req.status === "ACCEPTED" && (
                       <>
                         {/* <button
                           style={{
@@ -857,7 +886,7 @@ function UserRequests() {
                       </>
                     )}
 
-                    {req.status === "rejected" && (
+                    {req.status === "REJECTED" && (
                       <button
                         onClick={() => navigate("/location")}
                         style={{

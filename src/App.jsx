@@ -29,6 +29,7 @@ import PaymentSuccess from "./Pages/PaymentSuccess";
 import AddReview from "./Pages/Review";
 import ComplaintForm from "./Pages/Complaint";
 import OTPVerification from "./Pages/Otp";
+import AdminDashboard from "./Pages/Admindashboard";
 
 function App() {
   return (
@@ -39,7 +40,8 @@ function App() {
       <Route path="/Login" element={<Login />} />
       <Route path="/otpverification" element={<OTPVerification/>} />
       <Route path="/" element={<Home />} />
-
+      <Route path="/admindashboard" element={<AdminDashboard/>} />
+      
       {/*  USER ROUTES */}
       <Route
         path="/location"
@@ -84,7 +86,7 @@ function App() {
       />
       <Route path="/hostlogin" element={<HostLogin />} />
       <Route
-        path="/charging"
+        path="/charging/:requestId"
         element={
           <ProtectedRoute>
             <Charging />
