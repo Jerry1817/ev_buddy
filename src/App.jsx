@@ -26,17 +26,23 @@ import Nearbylocation from "./Pages/Nearby";
 import Location from "./Pages/Location";
 import Home from "./components/Home";
 import PaymentSuccess from "./Pages/PaymentSuccess";
+import AddReview from "./Pages/Review";
+import ComplaintForm from "./Pages/Complaint";
+import OTPVerification from "./Pages/Otp";
+import AdminDashboard from "./Pages/Admindashboard";
 
 function App() {
   return (
     <Routes>
-      {/* 🔓 AUTH ROUTES */}
-      <Route path="/register" element={<Register />} />
+      {/*  AUTH ROUTES */}
+      <Route path="/register" element={<Register />} /> 
       <Route path="/userregister" element={<UserRegister />} />
       <Route path="/Login" element={<Login />} />
+      <Route path="/otpverification" element={<OTPVerification/>} />
       <Route path="/" element={<Home />} />
-
-      {/* 🔐 USER ROUTES */}
+      <Route path="/admindashboard" element={<AdminDashboard/>} />
+      
+      {/*  USER ROUTES */}
       <Route
         path="/location"
         element={
@@ -70,9 +76,17 @@ function App() {
           </ProtectedRoute>
         }
       />
+       <Route
+        path="/complaints"
+        element={
+          <ProtectedRoute>
+            <ComplaintForm/>
+          </ProtectedRoute>
+        }
+      />
       <Route path="/hostlogin" element={<HostLogin />} />
       <Route
-        path="/charging"
+        path="/charging/:requestId"
         element={
           <ProtectedRoute>
             <Charging />
@@ -96,6 +110,14 @@ function App() {
           </ProtectedRoute>
         }
       />
+       <Route
+        path="/review/:requestId"
+        element={
+          <ProtectedRoute>
+            <AddReview/>
+          </ProtectedRoute>
+        }
+      />
 
       <Route
         path="/navigation"
@@ -106,7 +128,7 @@ function App() {
         }
       />
 
-      {/* 🔋 STATION DETAIL (NEW – WORKING) */}
+      {/*  STATION DETAIL (NEW – WORKING) */}
       <Route
         path="/station/:id"
         element={
@@ -116,7 +138,7 @@ function App() {
         }
       />
 
-      {/* 🔐 HOST ROUTES */}
+      {/*  HOST ROUTES */}
       <Route
         path="/hostregister"
         element={
@@ -155,13 +177,13 @@ function App() {
         }
       />
 
-      {/* 🔓 INFO PAGES */}
+      {/*  INFO PAGES */}
       <Route path="/help" element={<HelpSupport />} />
       <Route path="/privacy" element={<PrivacyPolicy />} />
       <Route path="/invite" element={<InviteFriends />} />
-      <Route path="/edit" element={<Edit />} />
+      {/* <Route path="/edit" element={<Edit />} /> */}
 
-      {/* 🔐 ADMIN */}
+      {/*  ADMIN */}
       {/* <Route
         path="/admin/dashboard"
         element={

@@ -14,7 +14,8 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
-import { User } from'lucide-react';
+import { User } from "lucide-react";
+import Header from "@/components/Header";
 
 function Home() {
   const navigate = useNavigate();
@@ -97,6 +98,8 @@ function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 relative overflow-hidden">
+      <Header token={token} userName={userName} onLogout={handleLogout} />
+
       <style>{`
         @keyframes charging-drop {
           0% {
@@ -223,7 +226,7 @@ function Home() {
         }
       `}</style>
 
-      <div className="fixed top-6 right-6 z-50 animate-slide-up">
+      {/* <div className="fixed top-6 right-6 z-50 animate-slide-up">
         <button
           onClick={handleLogout}
           className="ev-glass px-6 py-3 rounded-xl font-semibold text-slate-900 hover:bg-white/90 transition-all flex items-center gap-2 shadow-lg"
@@ -231,51 +234,50 @@ function Home() {
           <LogOut className="w-5 h-5" />
           Logout
         </button>
-      </div>
+      </div> */}
 
       {/* Login Button - Fixed top right */}
-    {token && (
-  <div className="fixed top-6 left-6 z-50 animate-slide-up flex items-center gap-3">
-    {/* User Profile Button */}
-    <button
-      onClick={() => navigate('/profile')}
-      className="group flex items-center gap-2 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg border border-emerald-200 hover:shadow-xl hover:scale-105 hover:border-emerald-400 transition-all cursor-pointer"
-    >
-      <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-full flex items-center justify-center group-hover:from-emerald-600 group-hover:to-emerald-700 transition-all">
-        <User className="w-4 h-4 text-white" />
-      </div>
-      {userName && (
-        <span className="text-slate-700 font-medium group-hover:text-emerald-700 transition-colors">
-          {userName}
-        </span>
-      )}
-      <ChevronRight className="w-4 h-4 text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity" />
-    </button>
+      {/* {token && (
+        <div className="fixed top-6 left-6 z-50 animate-slide-up flex items-center gap-3">
+          
+          <button
+            onClick={() => navigate("/profile")}
+            className="group flex items-center gap-2 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg border border-emerald-200 hover:shadow-xl hover:scale-105 hover:border-emerald-400 transition-all cursor-pointer"
+          >
+            <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-full flex items-center justify-center group-hover:from-emerald-600 group-hover:to-emerald-700 transition-all">
+              <User className="w-4 h-4 text-white" />
+            </div>
+            {userName && (
+              <span className="text-slate-700 font-medium group-hover:text-emerald-700 transition-colors">
+                {userName}
+              </span>
+            )}
+            <ChevronRight className="w-4 h-4 text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+          </button>
 
-    {/* My Requests Button */}
-    <button
-      onClick={() => navigate('/myrequests')}
-      className="group flex items-center gap-2 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg border border-purple-200 hover:shadow-xl hover:scale-105 hover:border-purple-400 transition-all cursor-pointer"
-    >
-      <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center group-hover:from-purple-600 group-hover:to-purple-700 transition-all">
-        <Clock className="w-4 h-4 text-white" />
-      </div>
-      <span className="text-slate-700 font-medium group-hover:text-purple-700 transition-colors">
-        My Requests
-      </span>
-      <ChevronRight className="w-4 h-4 text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity" />
-    </button>
-  </div>
-)}
+          <button
+            onClick={() => navigate("/myrequests")}
+            className="group flex items-center gap-2 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg border border-purple-200 hover:shadow-xl hover:scale-105 hover:border-purple-400 transition-all cursor-pointer"
+          >
+            <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center group-hover:from-purple-600 group-hover:to-purple-700 transition-all">
+              <Clock className="w-4 h-4 text-white" />
+            </div>
+            <span className="text-slate-700 font-medium group-hover:text-purple-700 transition-colors">
+              My Requests
+            </span>
+            <ChevronRight className="w-4 h-4 text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+          </button>
+        </div>
+      )} */}
 
-{!token && (
-  <div className="fixed top-6 left-6 z-50 animate-slide-up">
-    <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-full flex items-center justify-center shadow-lg">
-      <User className="w-5 h-5 text-white" />
-    </div>
-  </div>
-)}
-      <div className="fixed top-6 right-6 z-50 animate-slide-up">
+      {/* {!token && (
+        <div className="fixed top-6 left-6 z-50 animate-slide-up">
+          <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-full flex items-center justify-center shadow-lg">
+            <User className="w-5 h-5 text-white" />
+          </div>
+        </div>
+      )} */}
+      {/* <div className="fixed top-6 right-6 z-50 animate-slide-up">
         {isLoggedIn ? (
           <button
             onClick={handleLogout}
@@ -293,7 +295,7 @@ function Home() {
             Login
           </button>
         )}
-      </div>
+      </div> */}
 
       {/* Map Layer */}
       {location && (
@@ -315,7 +317,7 @@ function Home() {
 
       {/* UI Overlay */}
       <div
-        className={`relative z-10 flex flex-col min-h-screen transition-all duration-500 ${
+        className={`relative z-10 flex flex-col min-h-screen pt-24 transition-all duration-500 ${
           location ? "justify-start" : "justify-center"
         }`}
       >

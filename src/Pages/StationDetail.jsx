@@ -36,7 +36,7 @@ function StationDetail() {
       const response = await axios.post(
         "http://localhost:5000/api/charging/send",
         {
-          hostid: station._id,
+          hostid: station._id,// This is USER id acting as host
         },
         {
           headers: {
