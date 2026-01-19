@@ -94,6 +94,49 @@ function HostRequests() {
     }
   };
 
+  /* ▶ START CHARGING */
+  const startCharging = async (requestId) => {
+    const token = localStorage.getItem("hosttoken");
+    try {
+      await axios.patch(
+        `http://localhost:5000/api/host/start/${requestId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      alert("Charging started!");
+      fetchRequests(token);
+    } catch (error) {
+      console.error(error);
+      alert(error.response?.data?.message || "Failed to start charging");
+    }
+  };
+
+  /* ⏹ STOP CHARGING */
+  const stopCharging = async (requestId) => {
+    const token = localStorage.getItem("hosttoken");
+    try {
+      const res = await axios.patch(
+        `http://localhost:5000/api/host/stop/${requestId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const { durationInMinutes, totalCost } = res.data.summary;
+      alert(`Charging completed!\nDuration: ${durationInMinutes} mins\nTotal Cost: ₹${totalCost}`);
+      fetchRequests(token);
+    } catch (error) {
+      console.error(error);
+      alert(error.response?.data?.message || "Failed to stop charging");
+    }
+  };
+
   if (loading) {
     return <p className="p-4">Loading requests...</p>;
   }
@@ -149,9 +192,15 @@ return (
                 <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
                   req.status === 'REQUESTED' ? 'bg-orange-100 text-orange-700' :
                   req.status === 'ACCEPTED' ? 'bg-green-100 text-green-700' :
+                  req.status === 'ARRIVED' ? 'bg-blue-100 text-blue-700' :
+                  req.status === 'ACTIVE' ? 'bg-purple-100 text-purple-700' :
+                  req.status === 'COMPLETED' ? 'bg-emerald-100 text-emerald-700' :
                   'bg-red-100 text-red-700'
                 }`}>
-                  {req.status.toUpperCase()}
+                  {req.status === 'ARRIVED' ? '🚗 ARRIVED' :
+                   req.status === 'ACTIVE' ? '⚡ CHARGING' :
+                   req.status === 'COMPLETED' ? '✅ COMPLETED' :
+                   req.status.toUpperCase()}
                 </span>
               </div>
 
@@ -198,6 +247,57 @@ return (
                   >
                     ✗ Reject
                   </button>
+                </div>
+              )}
+
+              {/* Driver Arrived - Start Charging */}
+              {req.status === "ARRIVED" && (
+                <div className="space-y-3">
+                  <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                    <p className="text-blue-700 font-medium flex items-center gap-2">
+                      <span>🚗</span> Driver has arrived! Please verify the charger connection.
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => startCharging(req._id)}
+                    className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-3 rounded-xl font-semibold hover:from-green-600 hover:to-green-700 transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2"
+                  >
+                    ▶ Start Charging
+                  </button>
+                </div>
+              )}
+
+              {/* Charging Active - Stop Charging */}
+              {req.status === "ACTIVE" && (
+                <div className="space-y-3">
+                  <div className="bg-purple-50 border border-purple-200 rounded-xl p-4">
+                    <p className="text-purple-700 font-medium flex items-center gap-2">
+                      <span className="animate-pulse">⚡</span> Charging in progress...
+                    </p>
+                    <p className="text-purple-600 text-sm mt-1">
+                      Started at: {new Date(req.startedAt).toLocaleTimeString()}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => stopCharging(req._id)}
+                    className="w-full bg-gradient-to-r from-red-500 to-red-600 text-white py-3 rounded-xl font-semibold hover:from-red-600 hover:to-red-700 transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2"
+                  >
+                    ⏹ Stop Charging
+                  </button>
+                </div>
+              )}
+
+              {/* Completed */}
+              {req.status === "COMPLETED" && (
+                <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4">
+                  <p className="text-emerald-700 font-semibold flex items-center gap-2">
+                    <span>✅</span> Charging Completed
+                  </p>
+                  {req.totalCost && (
+                    <p className="text-emerald-600 text-sm mt-1">
+                      Duration: {req.totalDuration} mins • Cost: ₹{req.totalCost}
+                    </p>
+                  )}
                 </div>
               )}
             </div>

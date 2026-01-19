@@ -11,14 +11,16 @@ function Payment() {
   const { session, duration, totalCost } = state;
   console.log(state,"state");
   
-  console.log(state.session,"sessionId");
+  console.log(state.requestId
+,"sessionId");
 
   const handlePayment = async () => {
     
     try {
       const res = await axios.post(
         "http://localhost:5000/api/auth/payment/createorder",
-        {sessionId:state.session },
+        {requestId:state.requestId
+ },
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,

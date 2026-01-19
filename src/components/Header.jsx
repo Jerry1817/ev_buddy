@@ -31,7 +31,7 @@ export default function Header({ token, userName, onLogout }) {
                 <div className="w-8 h-8 bg-emerald-600 rounded-full flex items-center justify-center">
                   <User className="w-4 h-4 text-white" />
                 </div>
-                <span className="font-medium text-slate-700">{userName}</span>
+                <span className="font-medium text-slate-700">{userName ? userName : "Profile"}</span>
                 <ChevronRight className="w-4 h-4 text-slate-400" />
               </button>
 
