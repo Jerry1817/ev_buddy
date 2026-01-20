@@ -32,17 +32,28 @@ function Login() {
     console.log(res, 'res');
     
     if (res.data.success) {
-      localStorage.setItem("token", res.data.token);
+
+      // Set user token and role
+      localStorage.setItem("userToken", res.data.token);
+      localStorage.setItem("role", "DRIVER");
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+      
       toast.success('Login successful! Welcome back.', {
           duration: 5000,
           position: 'top-right',
         });
         setTimeout(()=>{
-          navigate("/",{state:{name:res.data.data.name}}); 
+          navigate("/",{state:{name:res.data.user.name}}); 
         },1000)
     }
   } catch (err) {
     console.error(err);
+    const errorMessage = err.response?.data?.message || "Login failed. Please check your credentials.";
+    setError(errorMessage);
+    toast.error(errorMessage, {
+      duration: 5000,
+      icon: err.response?.data?.blocked ? '🚫' : '❌',
+    });
   } finally {
     setIsLoading(false);
   }

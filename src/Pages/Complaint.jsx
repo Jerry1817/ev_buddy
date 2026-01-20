@@ -105,7 +105,7 @@ const PRIORITY_MAP = {
 
 const handleSubmit = async () => {
   try {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("userToken");
     setIsSubmitting(true);
 
     const formData = new FormData();

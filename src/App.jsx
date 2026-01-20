@@ -20,8 +20,11 @@ import Payment from "./Pages/Payment";
 // import AdminHome from "./Adimin/Pages/Home";
 import UserRequests from "./Pages/UserRequests";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AdminProtectedRoute from "./components/AdminProtectedRoute";
+import UserLayout from "./components/UserLayout";
 import StationDetail from "./Pages/StationDetail"; // ✅ FIXED PATH
 import HostLogin from "./Pages/HostLogin";
+import AdminLogin from "./Pages/AdminLogin";
 import Nearbylocation from "./Pages/Nearby";
 import Location from "./Pages/Location";
 import Home from "./components/Home";
@@ -30,6 +33,9 @@ import AddReview from "./Pages/Review";
 import ComplaintForm from "./Pages/Complaint";
 import OTPVerification from "./Pages/Otp";
 import AdminDashboard from "./Pages/Admindashboard";
+import HostReviews from "./Pages/HostReviews";
+import HostLayout from "./components/HostLayout";
+import HostDashboard from "./Pages/HostDashboard";
 
 function App() {
   return (
@@ -37,17 +43,22 @@ function App() {
       {/*  AUTH ROUTES */}
       <Route path="/register" element={<Register />} /> 
       <Route path="/userregister" element={<UserRegister />} />
-      <Route path="/Login" element={<Login />} />
       <Route path="/otpverification" element={<OTPVerification/>} />
       <Route path="/" element={<Home />} />
-      <Route path="/admindashboard" element={<AdminDashboard/>} />
-      
-      {/*  USER ROUTES */}
+      <Route path="/admindashboard" element={<AdminProtectedRoute><AdminDashboard/></AdminProtectedRoute>} />
+      <Route path="/admin/login" element={<AdminLogin />} />
+      <Route path="/host/login" element={<HostLogin />} />
+      <Route path="/Login" element={<Login />} />
+
+
+      {/*  USER ROUTES - With Header */}
       <Route
         path="/location"
         element={
           <ProtectedRoute>
-            <Location />
+            <UserLayout>
+              <Location />
+            </UserLayout>
           </ProtectedRoute>
         }
       />
@@ -55,7 +66,9 @@ function App() {
         path="/nearby"
         element={
           <ProtectedRoute>
-            <Nearbylocation />
+            <UserLayout>
+              <Nearbylocation />
+            </UserLayout>
           </ProtectedRoute>
         }
       />
@@ -64,7 +77,9 @@ function App() {
         path="/myrequests"
         element={
           <ProtectedRoute>
-            <UserRequests />
+            <UserLayout>
+              <UserRequests />
+            </UserLayout>
           </ProtectedRoute>
         }
       />
@@ -72,7 +87,9 @@ function App() {
         path="/profile"
         element={
           <ProtectedRoute>
-            <Profile />
+            <UserLayout>
+              <Profile />
+            </UserLayout>
           </ProtectedRoute>
         }
       />
@@ -80,20 +97,25 @@ function App() {
         path="/complaints"
         element={
           <ProtectedRoute>
-            <ComplaintForm/>
+            <UserLayout>
+              <ComplaintForm/>
+            </UserLayout>
           </ProtectedRoute>
         }
       />
-      <Route path="/hostlogin" element={<HostLogin />} />
+      {/* <Route path="/hostlogin" element={<HostLogin />} /> */}
       <Route
         path="/charging/:requestId"
         element={
           <ProtectedRoute>
-            <Charging />
+            <UserLayout>
+              <Charging />
+            </UserLayout>
           </ProtectedRoute>
         }
       />
 
+      {/* Payment page - NO Header as requested by user */}
       <Route
         path="/payment/:requestId"
         element={
@@ -106,7 +128,9 @@ function App() {
         path="/paymentsuccess"
         element={
           <ProtectedRoute>
-            <PaymentSuccess/>
+            <UserLayout>
+              <PaymentSuccess/>
+            </UserLayout>
           </ProtectedRoute>
         }
       />
@@ -114,7 +138,9 @@ function App() {
         path="/review/:requestId"
         element={
           <ProtectedRoute>
-            <AddReview/>
+            <UserLayout>
+              <AddReview/>
+            </UserLayout>
           </ProtectedRoute>
         }
       />
@@ -123,7 +149,9 @@ function App() {
         path="/navigation"
         element={
           <ProtectedRoute>
-            <Navigation />
+            <UserLayout>
+              <Navigation />
+            </UserLayout>
           </ProtectedRoute>
         }
       />
@@ -133,7 +161,9 @@ function App() {
         path="/station/:id"
         element={
           <ProtectedRoute>
-            <StationDetail />
+            <UserLayout>
+              <StationDetail />
+            </UserLayout>
           </ProtectedRoute>
         }
       />
@@ -157,13 +187,26 @@ function App() {
         }
       />
 
-      <Route path="/host/login" element={<HostLogin />} />
+
+      {/* Host Dashboard with Sidebar */}
+      <Route
+        path="/host/dashboard"
+        element={
+          <ProtectedRoute>
+            <HostLayout>
+              <HostDashboard />
+            </HostLayout>
+          </ProtectedRoute>
+        }
+      />
 
       <Route
         path="/hostrequests"
         element={
           <ProtectedRoute>
-            <HostRequests />
+            <HostLayout>
+              <HostRequests />
+            </HostLayout>
           </ProtectedRoute>
         }
       />
@@ -177,10 +220,21 @@ function App() {
         }
       />
 
-      {/*  INFO PAGES */}
-      <Route path="/help" element={<HelpSupport />} />
-      <Route path="/privacy" element={<PrivacyPolicy />} />
-      <Route path="/invite" element={<InviteFriends />} />
+      <Route
+        path="/hostreviews"
+        element={
+          <ProtectedRoute>
+            <HostLayout>
+              <HostReviews />
+            </HostLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      {/*  INFO PAGES - With Header */}
+      <Route path="/help" element={<UserLayout><HelpSupport /></UserLayout>} />
+      <Route path="/privacy" element={<UserLayout><PrivacyPolicy /></UserLayout>} />
+      <Route path="/invite" element={<UserLayout><InviteFriends /></UserLayout>} />
       {/* <Route path="/edit" element={<Edit />} /> */}
 
       {/*  ADMIN */}

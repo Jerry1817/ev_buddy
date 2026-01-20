@@ -21,7 +21,7 @@ function Home() {
   const navigate = useNavigate();
   const state = useLocation();
 
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("userToken");
   const userName = token
     ? state.state?.name || localStorage.getItem("userName")
     : null;
@@ -33,7 +33,7 @@ function Home() {
   const [isLoggedIn, setIsLoggedIn] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("userToken");
     console.log(token, "token");
     if (!token) return;
 
@@ -49,7 +49,7 @@ function Home() {
         const result = await res.json();
         setStatsData(result.data);
       } catch (err) {
-        setError("Failed to load stats");
+        console.log(err);
       }
     };
 
@@ -57,7 +57,7 @@ function Home() {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
+    localStorage.removeItem("userToken");
     setIsLoggedIn(false);
   };
 

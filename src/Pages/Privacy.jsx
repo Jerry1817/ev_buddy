@@ -1,8 +1,19 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const PrivacyPolicy = () => {
+  const navigate = useNavigate();
+  
   return (
     <div className="px-5 py-10 max-w-4xl mx-auto bg-[#f5fff5] rounded-2xl shadow-[0_4px_12px_rgba(0,128,0,0.15)] font-['Poppins']">
+      {/* Back Button */}
+      <button
+        onClick={() => navigate(-1)}
+        className="flex items-center gap-2 text-green-700 hover:text-green-900 mb-4 transition-colors"
+      >
+        <span className="text-xl">←</span>
+        <span className="text-sm font-medium">Back</span>
+      </button>
       
       <h1 className="text-4xl font-bold text-green-700 text-center mb-3">
         Privacy Policy

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../utils/api";
 import { useNavigate } from "react-router-dom";
 import { IoArrowBackOutline } from "react-icons/io5";
 
@@ -27,7 +27,7 @@ function HostRequests() {
     console.log(token,"token");
     
     try {
-      const res = await axios.get(
+      const res = await api.get(
         "http://localhost:5000/api/host/allrequests",{
           headers: {
             Authorization: `Bearer ${token}`
@@ -51,7 +51,7 @@ function HostRequests() {
         const token = localStorage.getItem("hosttoken");
 
     try {
-      await axios.patch(
+      await api.patch(
         `http://localhost:5000/api/chargingrequest/accept/${requestId}`,
         {},
         {
@@ -76,7 +76,7 @@ function HostRequests() {
         const token = localStorage.getItem("hosttoken");
         console.log(token,"token");
     try {
-      await axios.patch(
+      await api.patch(
   `http://localhost:5000/api/chargingrequest/reject/${requestId}`,
   {}, 
   {
@@ -98,7 +98,7 @@ function HostRequests() {
   const startCharging = async (requestId) => {
     const token = localStorage.getItem("hosttoken");
     try {
-      await axios.patch(
+      await api.patch(
         `http://localhost:5000/api/host/start/${requestId}`,
         {},
         {
@@ -119,7 +119,7 @@ function HostRequests() {
   const stopCharging = async (requestId) => {
     const token = localStorage.getItem("hosttoken");
     try {
-      const res = await axios.patch(
+      const res = await api.patch(
         `http://localhost:5000/api/host/stop/${requestId}`,
         {},
         {

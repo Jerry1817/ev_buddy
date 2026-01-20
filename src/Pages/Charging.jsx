@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
-import axios from "axios";
+import api from "../utils/api";
 
 function Charging() {
   const {state}=useLocation()
@@ -16,7 +16,7 @@ function Charging() {
   // Start charging API
   const startCharging = async () => {
     try {
-      const res = await axios.post(
+      const res = await api.post(
         "http://localhost:5000/api/auth/chargingstart",
         {
           requestId:state
@@ -25,7 +25,7 @@ function Charging() {
         },
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${localStorage.getItem("userToken")}`,
           },
         }
       );
@@ -41,14 +41,14 @@ function Charging() {
   // Stop charging
 const stopCharging = async () => {
   try {
-    const res = await axios.post(
+    const res = await api.post(
       "http://localhost:5000/api/auth/chargingend",
       {
         sessionId,
       },
       {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${localStorage.getItem("userToken")}`,
         },
       }
     );

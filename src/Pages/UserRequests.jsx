@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../utils/api";
 import { useNavigate } from "react-router-dom";
 
 function UserRequests() {
@@ -17,7 +17,7 @@ function UserRequests() {
     setLoading(true);
 
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("userToken");
 
       if (!token) {
         alert("Login required");
@@ -26,7 +26,7 @@ function UserRequests() {
         return;
       }
 
-      const res = await axios.get(
+      const res = await api.get(
         "http://localhost:5000/api/auth/viewrequests",
         {
           headers: {
@@ -48,9 +48,9 @@ function UserRequests() {
 
   const markArrived = async (requestId) => {
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("userToken");
 
-      await axios.patch(
+      await api.patch(
         `http://localhost:5000/api/auth/charging/arrived/${requestId}`,
         {},
         {
@@ -111,19 +111,39 @@ function UserRequests() {
   const filterOptions = [
     { value: "all", label: "All", count: requests.length },
     {
-      value: "pending",
+      value: "REQUESTED",
       label: "Pending",
       count: requests.filter((r) => r.status === "REQUESTED").length,
     },
     {
-      value: "accepted",
+      value: "ACCEPTED",
       label: "Accepted",
       count: requests.filter((r) => r.status === "ACCEPTED").length,
     },
     {
-      value: "rejected",
+      value: "ARRIVED",
+      label: "Arrived",
+      count: requests.filter((r) => r.status === "ARRIVED").length,
+    },
+    {
+      value: "ACTIVE",
+      label: "Charging",
+      count: requests.filter((r) => r.status === "ACTIVE").length,
+    },
+    {
+      value: "COMPLETED",
+      label: "Completed",
+      count: requests.filter((r) => r.status === "COMPLETED").length,
+    },
+    {
+      value: "REJECTED",
       label: "Rejected",
       count: requests.filter((r) => r.status === "REJECTED").length,
+    },
+    {
+      value: "EXPIRED",
+      label: "Expired",
+      count: requests.filter((r) => r.status === "EXPIRED").length,
     },
   ];
 

@@ -81,7 +81,7 @@ function AddReview() {
 
 
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("userToken");
 
       if (!token) {
        toast.error("Please login to submit a review", {

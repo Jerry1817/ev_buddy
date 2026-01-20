@@ -1,9 +1,21 @@
 import React from "react";
-import { Phone, Mail, MessageSquare } from "lucide-react";
+import { Phone, Mail, MessageSquare, ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 function HelpSupport() {
+  const navigate = useNavigate();
+  
   return (
     <div className="bg-slate-50 rounded-2xl px-6 py-6 text-center font-[Inter,sans-serif] text-[#1a1a1a] max-w-sm mx-auto shadow-md">
+      {/* Back Button */}
+      <button
+        onClick={() => navigate(-1)}
+        className="flex items-center gap-2 text-slate-600 hover:text-slate-900 mb-4 transition-colors"
+      >
+        <ArrowLeft className="w-5 h-5" />
+        <span className="text-sm font-medium">Back</span>
+      </button>
+      
       <h2 className="text-2xl font-semibold mb-5">Help and Support</h2>
 
       {/* Options */}

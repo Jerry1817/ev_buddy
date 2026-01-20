@@ -1,7 +1,7 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { IoArrowBackOutline, IoLocationOutline } from "react-icons/io5";
-import axios from "axios";
+import api from "../utils/api";
 
 function StationDetail() {
   const navigate = useNavigate();
@@ -26,14 +26,14 @@ function StationDetail() {
 
   const handleSendRequest = async () => {
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("userToken");
       if (!token) {
         alert("Please login again");
         navigate("/");
         return;
       }
 
-      const response = await axios.post(
+      const response = await api.post(
         "http://localhost:5000/api/charging/send",
         {
           hostid: station._id,// This is USER id acting as host

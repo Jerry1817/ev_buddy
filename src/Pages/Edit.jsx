@@ -1,6 +1,7 @@
 // src/pages/Profile.jsx
 import React, { useEffect, useState } from "react";
-import { FiEdit2, FiPlus, FiTrash2, FiSave } from "react-icons/fi";
+import { FiEdit2, FiPlus, FiTrash2, FiSave, FiArrowLeft } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 
 /**
  * VehicleCard - small subcomponent for each vehicle
@@ -72,6 +73,7 @@ function VehicleCard({ vehicle, onChange, onRemove }) {
 }
 
 export default function Edit() {
+  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [email] = useState("thanzeelt717@gmail.com");
   const [phone, setPhone] = useState("");
@@ -164,7 +166,10 @@ export default function Edit() {
     <div className="max-w-[720px] mx-auto mt-3 mb-6 px-4 py-5 font-[Inter,system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial] text-[#073b3a]">
       {/* Header */}
       <header className="flex items-center gap-3 mb-4">
-        <button className="text-[20px] bg-transparent border-none cursor-pointer">
+        <button 
+          className="text-[20px] bg-transparent border-none cursor-pointer"
+          onClick={() => navigate(-1)}
+        >
           ←
         </button>
         <h1 className="text-xl font-semibold">Profile</h1>
