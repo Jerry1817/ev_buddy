@@ -14,7 +14,7 @@ function OTPVerification() {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [isVerifying, setIsVerifying] = useState(false);
   const [error, setError] = useState("");
-  const [resendTimer, setResendTimer] = useState(60);
+  const [resendTimer, setResendTimer] = useState(600);
   const [canResend, setCanResend] = useState(false);
   const inputRefs = useRef([]);
 
@@ -175,7 +175,7 @@ function OTPVerification() {
 
   try {
     setCanResend(false);
-    setResendTimer(60);
+    setResendTimer(600);
     setOtp(["", "", "", "", "", ""]);
     setError("");
     inputRefs.current[0]?.focus();
@@ -334,8 +334,25 @@ function OTPVerification() {
               ref={(el) => (inputRefs.current[index] = el)}
               value={digit}
               onChange={(e) => handleChange(index, e.target.value)}
+              onKeyDown={(e) => handleKeyDown(index, e)}
+              onPaste={index === 0 ? handlePaste : undefined}
               maxLength={1}
               inputMode="numeric"
+              className="otp-input"
+              style={{
+                width: "52px",
+                height: "64px",
+                fontSize: "24px",
+                fontWeight: "700",
+                textAlign: "center",
+                border: digit ? "2px solid #059669" : "2px solid #e2e8f0",
+                borderRadius: "12px",
+                outline: "none",
+                background: digit ? "#f0fdf4" : "#f8fafc",
+                color: "#0f172a",
+                caretColor: "#059669",
+                transition: "all 0.2s ease",
+              }}
             />
           ))}
         </div>
@@ -459,7 +476,9 @@ function OTPVerification() {
               }}
             >
               Resend in{" "}
-              <strong style={{ color: "#059669" }}>{resendTimer}s</strong>
+              <strong style={{ color: "#059669" }}>
+                {Math.floor(resendTimer / 60)}:{String(resendTimer % 60).padStart(2, '0')}
+              </strong>
             </p>
           )}
         </div>

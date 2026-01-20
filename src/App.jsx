@@ -43,7 +43,7 @@ function App() {
   return (
     <Routes>
       {/*  AUTH ROUTES */}
-      <Route path="/register" element={<Register />} /> 
+      {/* <Route path="/register" element={<Register />} />  */}
       <Route path="/userregister" element={<UserRegister />} />
       <Route path="/otpverification" element={<OTPVerification/>} />
       <Route path="/" element={<Home />} />
