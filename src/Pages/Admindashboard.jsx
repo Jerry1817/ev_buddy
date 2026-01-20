@@ -3,9 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import {
   Users, Zap, MessageSquare, CreditCard, Menu, X,
-  LayoutDashboard, LogOut, Loader2, RefreshCw
+  LayoutDashboard, LogOut, Loader2, RefreshCw, BarChart3
 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import AdminAnalytics from './AdminAnalytics';
 
 export default function AdminDashboard() {
   const [activePage, setActivePage] = useState('dashboard');
@@ -19,6 +20,7 @@ export default function AdminDashboard() {
   const [hosts, setHosts] = useState([]);
   const [complaints, setComplaints] = useState([]);
   const [transactions, setTransactions] = useState([]);
+  const [analyticsData, setAnalyticsData] = useState({ dailySessions: [], popularStations: [] });
 
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -26,6 +28,7 @@ export default function AdminDashboard() {
     { id: 'hosts', label: 'Hosts', icon: Zap },
     { id: 'complaints', label: 'Complaints', icon: MessageSquare },
     { id: 'transactions', label: 'Transactions', icon: CreditCard },
+    { id: 'analytics', label: 'Analytics', icon: BarChart3 },
   ];
 
   // Get admin token for API requests
@@ -45,6 +48,21 @@ export default function AdminDashboard() {
       if (error.response?.status === 401 || error.response?.status === 403) {
         handleLogout();
       }
+    }
+  };
+
+  // Fetch analytics for dashboard charts
+  const fetchAnalytics = async () => {
+    try {
+      const res = await api.get('http://localhost:5000/api/admin/analytics', getAuthHeaders());
+      if (res.data.success) {
+        setAnalyticsData({
+          dailySessions: res.data.data.dailySessions || [],
+          popularStations: res.data.data.popularStations || [],
+        });
+      }
+    } catch (error) {
+      console.error('Failed to fetch analytics:', error);
     }
   };
 
@@ -135,7 +153,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
-      await Promise.all([fetchStats(), fetchUsers(), fetchHosts(), fetchComplaints(), fetchTransactions()]);
+      await Promise.all([fetchStats(), fetchUsers(), fetchHosts(), fetchComplaints(), fetchTransactions(), fetchAnalytics()]);
       setLoading(false);
     };
     loadData();
@@ -226,6 +244,62 @@ export default function AdminDashboard() {
                   <CreditCard className="text-purple-500" size={32} />
                 </div>
               </div>
+            </div>
+
+            {/* Usage Trend */}
+            <div className="bg-white rounded-lg shadow p-6 mb-6">
+              <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                <BarChart3 size={20} className="text-green-600" />
+                Sessions (Last 7 Days)
+              </h2>
+              {analyticsData.dailySessions.length === 0 ? (
+                <p className="text-gray-400 text-center py-8">No session data available</p>
+              ) : (
+                <div className="flex items-end gap-2 h-32">
+                  {analyticsData.dailySessions.map((day) => {
+                    const maxCount = Math.max(...analyticsData.dailySessions.map(d => d.count), 1);
+                    return (
+                      <div key={day._id} className="flex-1 flex flex-col items-center">
+                        <div
+                          className="w-full bg-green-500 rounded-t transition-all"
+                          style={{ height: `${(day.count / maxCount) * 100}%`, minHeight: '4px' }}
+                        ></div>
+                        <span className="text-xs text-gray-500 mt-2">{day._id.slice(5)}</span>
+                        <span className="text-xs font-semibold text-gray-700">{day.count}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            {/* Popular Stations */}
+            <div className="bg-white rounded-lg shadow p-6">
+              <h2 className="text-lg font-semibold text-gray-800 mb-4">Top 5 Popular Stations</h2>
+              {analyticsData.popularStations.length === 0 ? (
+                <p className="text-gray-400 text-center py-8">No station data available</p>
+              ) : (
+                <table className="w-full text-left">
+                  <thead>
+                    <tr className="text-xs text-gray-500 uppercase border-b">
+                      <th className="py-2 px-4">#</th>
+                      <th className="py-2 px-4">Station</th>
+                      <th className="py-2 px-4">Host</th>
+                      <th className="py-2 px-4 text-right">Sessions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y">
+                    {analyticsData.popularStations.map((station, index) => (
+                      <tr key={station.hostId} className="hover:bg-gray-50">
+                        <td className="py-2 px-4 font-semibold text-gray-600">{index + 1}</td>
+                        <td className="py-2 px-4 font-medium text-gray-800">{station.stationName || 'N/A'}</td>
+                        <td className="py-2 px-4 text-gray-600">{station.hostName}</td>
+                        <td className="py-2 px-4 text-right font-bold text-green-600">{station.sessionCount}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
             </div>
           </div>
         );
@@ -460,6 +534,9 @@ export default function AdminDashboard() {
             </div>
           </div>
         );
+      
+      case 'analytics':
+        return <AdminAnalytics />;
       
       default:
         return null;

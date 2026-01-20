@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import api from "../utils/api";
+import toast from "react-hot-toast";
 
 function Charging() {
   const {state}=useLocation()
@@ -33,7 +34,7 @@ function Charging() {
       setSessionId(res.data.data._id);
       setIsCharging(true);
     } catch (err) {
-      alert("Failed to start charging");
+      toast.error("Failed to start charging");
       console.error(err);
     }
   };
@@ -65,7 +66,7 @@ const stopCharging = async () => {
 
   } catch (err) {
     console.error(err);
-    alert("Failed to stop charging");
+    toast.error("Failed to stop charging");
   }
 };
 

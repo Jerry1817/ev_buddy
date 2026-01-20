@@ -1,7 +1,8 @@
 import { useState } from "react";
 import api from "../utils/api";
-import { useLocation, useNavigate } from "react-router-dom";
-import { ArrowLeft, Zap, Clock, Battery, CreditCard, CheckCircle } from "lucide-react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { Zap, CreditCard, Clock, MapPin, User } from "lucide-react";
+import toast from "react-hot-toast";
 
 function Payment() {
   const navigate = useNavigate();
@@ -55,7 +56,7 @@ function Payment() {
         openRazorpay(res.data.order, res.data);
       }
     } catch (err) {
-      alert("Payment failed. Please try again.");
+      toast.error("Payment failed. Please try again.");
       console.error(err);
       setIsProcessing(false);
     }
@@ -98,11 +99,11 @@ function Payment() {
             };
             navigate('/paymentsuccess', { state: successState });
           } else {
-             alert("Payment verification failed! Please contact support.");
+             toast.error("Payment verification failed! Please contact support.");
           }
         } catch (error) {
           console.error("Verification Error:", error);
-          alert("Payment verification failed! Please contact support.");
+          toast.error("Payment verification failed! Please contact support.");
         } finally {
            setIsProcessing(false);
         }

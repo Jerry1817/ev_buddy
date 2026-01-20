@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import MapPicker from "../components/MapPicker";
+import toast from "react-hot-toast";
 import { 
   Zap, 
   MapPin, 
@@ -68,7 +69,7 @@ function HostRegister() {
     e.preventDefault();
 
     if (!location.lat || !location.lng) {
-      alert("Please pick station location 📍");
+      toast.error("Please pick station location 📍");
       return;
     }
 
@@ -138,11 +139,11 @@ function HostRegister() {
       localStorage.setItem("token", token);
       localStorage.setItem("role", "host");
 
-      alert("🎉 Station registered successfully! Welcome to EV Buddy Host Network!");
+      toast.success("🎉 Station registered successfully! Welcome to EV Buddy Host Network!");
       navigate("/hostrequests");
     } catch (err) {
       console.error("Registration error:", err);
-      alert(err.response?.data?.message || "Registration failed. Please try again.");
+      toast.error(err.response?.data?.message || "Registration failed. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -151,12 +152,12 @@ function HostRegister() {
   const nextStep = () => {
     if (step === 1) {
       if (!formData.name || !formData.email || !formData.phone || !formData.password) {
-        alert("Please fill all owner details");
+        toast.error("Please fill all owner details");
         return;
       }
     } else if (step === 2) {
       if (!formData.stationName || !formData.totalChargers || !formData.power || !formData.rate || !formData.address) {
-        alert("Please fill all station details");
+        toast.error("Please fill all station details");
         return;
       }
     }

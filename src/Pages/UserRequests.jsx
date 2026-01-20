@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import api from "../utils/api";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 function UserRequests() {
   const navigate = useNavigate();
@@ -20,7 +21,7 @@ function UserRequests() {
       const token = localStorage.getItem("userToken");
 
       if (!token) {
-        alert("Login required");
+        toast.error("Login required");
         setLoading(false);
         navigate("/");
         return;
@@ -38,7 +39,7 @@ function UserRequests() {
       setRequests(res.data.data);
     } catch (error) {
       console.error(error);
-      alert("Failed to load requests");
+      toast.error("Failed to load requests");
     } finally {
       setLoading(false);
     }
@@ -62,7 +63,7 @@ function UserRequests() {
 
       fetchMyRequests();
     } catch (err) {
-      alert("Failed to mark arrival");
+      toast.error("Failed to mark arrival");
     }
   };
 

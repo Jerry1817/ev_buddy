@@ -11,7 +11,8 @@ import {
   Zap,
   User,
   ChevronRight,
-  Building2
+  Building2,
+  TrendingUp
 } from "lucide-react";
 
 export default function HostLayout({ children }) {
@@ -59,6 +60,11 @@ export default function HostLayout({ children }) {
       name: "Reviews",
       path: "/hostreviews",
       icon: Star,
+    },
+    {
+      name: "Earnings",
+      path: "/host/earnings",
+      icon: TrendingUp,
     },
     {
       name: "Station Settings",

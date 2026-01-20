@@ -22,8 +22,10 @@ import {
   Save,
   ArrowLeft,
   Star,
-  Car
+  Car,
+  Receipt
 } from "lucide-react";
+import toast from "react-hot-toast";
 import api from "../utils/api";
 import { useNavigate } from "react-router-dom";
 
@@ -134,7 +136,7 @@ if (!user){
       setIsSaving(false);
       setIsEditModalOpen(false);
       // You can add toast notification here
-      alert("Profile updated successfully!");
+      toast.success("Profile updated successfully!");
     }, 1500);
   };
 
@@ -146,6 +148,36 @@ if (!user){
     localStorage.removeItem("role");
     localStorage.removeItem("userName");
     navigate("/login");
+  };
+
+  // Image Upload Handler
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const uploadData = new FormData();
+    uploadData.append("image", file);
+
+    try {
+      const token = localStorage.getItem("userToken");
+      const res = await api.post("http://localhost:5000/api/auth/upload-avatar", uploadData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+           Authorization: `Bearer ${token}`
+        },
+      });
+
+      if (res.data.success) {
+        toast.success("Profile image updated!");
+        // Update local user state with new image path
+        // Ensure path starts with slash if not already or absolute URL
+        const imagePath = res.data.profileImage;
+        setUser((prev) => ({ ...prev, profileImage: imagePath }));
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to upload image");
+    }
   };
   
   
@@ -312,7 +344,7 @@ if (!user){
             <div className="relative">
               <div className="w-24 h-24 md:w-28 md:h-28 rounded-full bg-white p-1 shadow-xl">
                 <img
-                  src="https://via.placeholder.com/120"
+                  src={user.profileImage ? `http://localhost:5000${user.profileImage}` : "https://via.placeholder.com/120"}
                   alt="Profile"
                   className="w-full h-full rounded-full object-cover"
                 />
@@ -442,6 +474,21 @@ if (!user){
               <ChevronRight className="w-5 h-5 text-slate-400" />
             </div>
 
+            {/* Transaction History */}
+            <div onClick={() => navigate("/transactions")}
+              className="menu-item bg-white rounded-xl p-4 border border-slate-200 shadow-md cursor-pointer flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="icon-bg w-11 h-11 bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-xl flex items-center justify-center">
+                  <Receipt className="w-5 h-5 text-emerald-600" />
+                </div>
+                <div>
+                  <p className="font-semibold text-slate-900">Transaction History</p>
+                  <p className="text-xs text-slate-500">View past payments</p>
+                </div>
+              </div>
+              <ChevronRight className="w-5 h-5 text-slate-400" />
+            </div>
+
             {/* Submit Complaint */}
             <div    onClick={() => navigate("/complaints")}
              className="menu-item bg-white rounded-xl p-4 border border-slate-200 shadow-md cursor-pointer flex items-center justify-between">
@@ -516,14 +563,21 @@ if (!user){
                 <div className="relative inline-block">
                   <div className="w-24 h-24 rounded-full bg-slate-200 overflow-hidden">
                     <img
-                      src="https://via.placeholder.com/120"
+                      src={user.profileImage ? `http://localhost:5000${user.profileImage}` : "https://via.placeholder.com/120"}
                       alt="Profile"
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <button className="absolute bottom-0 right-0 w-8 h-8 bg-emerald-500 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-emerald-600 transition-all">
+                  <label htmlFor="file-upload" className="absolute bottom-0 right-0 w-8 h-8 bg-emerald-500 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-emerald-600 transition-all cursor-pointer">
                     <Camera className="w-4 h-4" />
-                  </button>
+                  </label>
+                  <input 
+                    id="file-upload" 
+                    type="file" 
+                    accept="image/*" 
+                    className="hidden" 
+                    onChange={handleImageUpload} 
+                  />
                 </div>
                 <p className="text-xs text-slate-500 mt-2">Click camera icon to change photo</p>
               </div>

@@ -105,7 +105,7 @@ function Location() {
 
   const handleUseMyLocation = () => {
     if (!navigator.geolocation) {
-      alert("Geolocation is not supported by your browser");
+      toast.error("Geolocation is not supported by your browser");
       return;
     }
 
@@ -127,14 +127,11 @@ function Location() {
         setIsLoadingLocation(false);
         
         if (error.code === error.PERMISSION_DENIED) {
-          alert(
-            "Location access denied. Please:\n\n" +
-            "1. Click the lock icon (🔒) next to the URL\n" +
-            "2. Change Location to 'Allow'\n" +
-            "3. Refresh the page"
+          toast.error(
+            "Location access denied. Please click the lock icon next to the URL and allow location access, then refresh."
           );
         } else {
-          alert("Unable to get your location. Please try again.");
+          toast.error("Unable to get your location. Please try again.");
         }
       },
       {
@@ -147,7 +144,7 @@ function Location() {
 
   const handleConfirmLocation = async () => {
     if (!markerPosition) {
-      alert("Please select a location on the map");
+      toast.error("Please select a location on the map");
       return;
     }
 
@@ -172,7 +169,7 @@ function Location() {
       fetchStations();
     } catch (err) {
       console.error("Failed to save location", err);
-      alert(err.response?.data?.message || "Failed to save location");
+      toast.error(err.response?.data?.message || "Failed to save location");
       setIsSavingLocation(false);
     }
   };

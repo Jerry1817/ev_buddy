@@ -21,7 +21,7 @@ function AddReview() {
 
   useEffect(() => {
     if (!stationData) {
-      alert("No station data found. Redirecting back...");
+      toast.error("No station data found. Redirecting back...");
       navigate(-1);
     }
   }, [stationData, navigate]);

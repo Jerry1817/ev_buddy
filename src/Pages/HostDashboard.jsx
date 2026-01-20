@@ -31,13 +31,13 @@ export default function HostDashboard() {
   // Get host data from localStorage safely
   const getUserFromStorage = () => {
     try {
-      const storedUser = localStorage.getItem("user");
+      const storedUser = localStorage.getItem("host");
       if (storedUser && storedUser !== "undefined" && storedUser !== "null") {
         return JSON.parse(storedUser);
       }
       return {};
     } catch (error) {
-      console.error("Error parsing user from localStorage:", error);
+      console.error("Error parsing host from localStorage:", error);
       return {};
     }
   };

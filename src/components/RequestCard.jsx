@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import toast from "react-hot-toast";
 
 
 export default function RequestCard({ request, onAccept, onReject }) {
@@ -11,7 +12,7 @@ export default function RequestCard({ request, onAccept, onReject }) {
       await onAccept(request.id);
       setOpen(false);
     } catch (err) {
-      alert("Accept failed: " + (err.message || err));
+      toast.error("Accept failed: " + (err.message || err));
     } finally {
       setBusy(false);
     }
@@ -25,7 +26,7 @@ export default function RequestCard({ request, onAccept, onReject }) {
       await onReject(request.id);
       setOpen(false);
     } catch (err) {
-      alert("Reject failed: " + (err.message || err));
+      toast.error("Reject failed: " + (err.message || err));
     } finally {
       setBusy(false);
     }

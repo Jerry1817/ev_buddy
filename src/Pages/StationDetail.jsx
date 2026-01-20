@@ -2,6 +2,7 @@ import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { IoArrowBackOutline, IoLocationOutline } from "react-icons/io5";
 import api from "../utils/api";
+import toast from "react-hot-toast";
 
 function StationDetail() {
   const navigate = useNavigate();
@@ -28,7 +29,7 @@ function StationDetail() {
     try {
       const token = localStorage.getItem("userToken");
       if (!token) {
-        alert("Please login again");
+        toast.error("Please login again");
         navigate("/");
         return;
       }
@@ -45,14 +46,14 @@ function StationDetail() {
         }
       );
 
-      alert("Charging request sent successfully ⚡");
+      toast.success("Charging request sent successfully ⚡");
       if(response.data){
   navigate("/myrequests");
 }
 
     } catch (error) {
       console.error("Send request error:", error.response?.data || error);
-      alert(
+      toast.error(
         error.response?.data?.message ||
           "Failed to send request. Please try again."
       );
@@ -187,7 +188,7 @@ function StationDetail() {
                   "_blank"
                 );
               } else {
-                alert("Location coordinates not available");
+                toast.error("Location coordinates not available");
               }
             }}
           >

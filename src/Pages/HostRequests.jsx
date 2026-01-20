@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import api from "../utils/api";
 import { useNavigate } from "react-router-dom";
 import { IoArrowBackOutline } from "react-icons/io5";
+import toast from "react-hot-toast";
 
 function HostRequests() {
   const [requests, setRequests] = useState([]);
@@ -14,7 +15,7 @@ function HostRequests() {
     const role = localStorage.getItem("role");
 
     if (!token || role !== "HOST") {
-      alert("Please login as host");
+      toast.error("Please login as host");
       navigate("/host/login");
       return;
     }
@@ -40,7 +41,7 @@ function HostRequests() {
       setRequests(res.data.requests);
     } catch (error) {
       console.error(error);
-      alert("Failed to load requests");
+      toast.error("Failed to load requests");
     } finally {
       setLoading(false);
     }
@@ -61,11 +62,11 @@ function HostRequests() {
         }
       );
 
-      alert("Request accepted");
+      toast.success("Request accepted");
       fetchRequests(token);
     } catch (error) {
       console.error(error);
-      alert("Failed to accept request");
+      toast.error("Failed to accept request");
     }
   };
 
@@ -86,11 +87,11 @@ function HostRequests() {
   }
 );
 
-      alert("Request rejected");
+      toast.success("Request rejected");
       fetchRequests(token);;
     } catch (error) {
       console.error(error);
-      alert("Failed to reject request");
+      toast.error("Failed to reject request");
     }
   };
 
@@ -107,11 +108,11 @@ function HostRequests() {
           },
         }
       );
-      alert("Charging started!");
+      toast.success("Charging started!");
       fetchRequests(token);
     } catch (error) {
       console.error(error);
-      alert(error.response?.data?.message || "Failed to start charging");
+      toast.error(error.response?.data?.message || "Failed to start charging");
     }
   };
 
@@ -129,11 +130,11 @@ function HostRequests() {
         }
       );
       const { durationInMinutes, totalCost } = res.data.summary;
-      alert(`Charging completed!\nDuration: ${durationInMinutes} mins\nTotal Cost: ₹${totalCost}`);
+      toast.success(`Charging completed! Duration: ${durationInMinutes} mins, Total Cost: ₹${totalCost}`);
       fetchRequests(token);
     } catch (error) {
       console.error(error);
-      alert(error.response?.data?.message || "Failed to stop charging");
+      toast.error(error.response?.data?.message || "Failed to stop charging");
     }
   };
 

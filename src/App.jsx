@@ -36,6 +36,8 @@ import AdminDashboard from "./Pages/Admindashboard";
 import HostReviews from "./Pages/HostReviews";
 import HostLayout from "./components/HostLayout";
 import HostDashboard from "./Pages/HostDashboard";
+import HostEarnings from "./Pages/HostEarnings";
+import TransactionHistory from "./Pages/TransactionHistory";
 
 function App() {
   return (
@@ -89,6 +91,16 @@ function App() {
           <ProtectedRoute>
             <UserLayout>
               <Profile />
+            </UserLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/transactions"
+        element={
+          <ProtectedRoute>
+            <UserLayout>
+              <TransactionHistory />
             </UserLayout>
           </ProtectedRoute>
         }
@@ -171,11 +183,7 @@ function App() {
       {/*  HOST ROUTES */}
       <Route
         path="/hostregister"
-        element={
-          <ProtectedRoute>
-            <HostRegister />
-          </ProtectedRoute>
-        }
+        element={<HostRegister />}
       />
 
       <Route
@@ -226,6 +234,17 @@ function App() {
           <ProtectedRoute>
             <HostLayout>
               <HostReviews />
+            </HostLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/host/earnings"
+        element={
+          <ProtectedRoute>
+            <HostLayout>
+              <HostEarnings />
             </HostLayout>
           </ProtectedRoute>
         }

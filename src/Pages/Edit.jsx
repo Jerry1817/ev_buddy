@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { FiEdit2, FiPlus, FiTrash2, FiSave, FiArrowLeft } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 /**
  * VehicleCard - small subcomponent for each vehicle
@@ -124,20 +125,20 @@ export default function Edit() {
   // validate before save
   const validate = () => {
     if (!name.trim()) {
-      alert("Please enter your name.");
+      toast.error("Please enter your name.");
       return false;
     }
     if (!/^\d{6,15}$/.test(phone.replace(/\s+/g, ""))) {
-      alert("Please enter a valid phone number.");
+      toast.error("Please enter a valid phone number.");
       return false;
     }
     for (const v of vehicles) {
       if (v.name && v.name.length > 80) {
-        alert("Vehicle name too long.");
+        toast.error("Vehicle name too long.");
         return false;
       }
       if (v.range !== "" && (isNaN(v.range) || v.range < 0)) {
-        alert("Vehicle ranges must be numbers >= 0.");
+        toast.error("Vehicle ranges must be numbers >= 0.");
         return false;
       }
     }
@@ -149,7 +150,7 @@ export default function Edit() {
     const payload = { name, email, phone, vehicles };
     localStorage.setItem("profile_v1", JSON.stringify(payload));
     console.log("Profile saved:", payload);
-    alert("Profile saved locally. Replace with API call if needed.");
+    toast.success("Profile saved successfully!");
   };
 
   const handleReset = () => {

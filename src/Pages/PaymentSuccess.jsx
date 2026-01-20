@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { CheckCircle2, Download, Home, Zap, User, MapPin, CreditCard, Calendar, Clock, FileText } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
+import toast from 'react-hot-toast';
 
 function PaymentSuccess() {
   const { state } = useLocation();
@@ -145,7 +146,7 @@ function PaymentSuccess() {
       setIsGeneratingInvoice(false);
     } catch (error) {
       console.error('Error downloading invoice:', error);
-      alert('Failed to download invoice. Using browser print instead...');
+      toast.error('Failed to download invoice. Using browser print instead...');
       window.print(); // Fallback to browser print
       setIsGeneratingInvoice(false);
     }

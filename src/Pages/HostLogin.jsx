@@ -13,7 +13,7 @@ function HostLogin() {
 
   const [loading, setLoading] = useState(false);
 
-  /* 🔁 AUTO LOGIN CHECK */
+  /*  AUTO LOGIN CHECK */
   useEffect(() => {
     const token = localStorage.getItem("hosttoken") || localStorage.getItem("token");
     const role = localStorage.getItem("role");
@@ -51,7 +51,7 @@ function HostLogin() {
         return;
       }
 
-      // ✅ SAVE HOST TOKEN AND USER DATA (only hosttoken, role, user)
+      //  SAVE HOST TOKEN AND USER DATA (only hosttoken, role, user)
 
       
       localStorage.setItem("hosttoken", token);
