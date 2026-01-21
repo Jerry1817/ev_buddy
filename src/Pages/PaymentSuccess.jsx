@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { CheckCircle2, Download, Home, Zap, User, MapPin, CreditCard, Calendar, Clock, FileText } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../utils/api';
+import toast from 'react-hot-toast';
 
 function PaymentSuccess() {
   const { state } = useLocation();
@@ -17,59 +18,61 @@ function PaymentSuccess() {
       return;
     }
 
-    const { user, host, session, order } = state;
+    // API response structure: { order, session, host, user }
+    const { user = {}, host = {}, session = {}, order = {} } = state;
 
-    console.log(state,"state");
+    console.log("PaymentSuccess state:", state);
     
-    // Structure the data for display
+    // Structure the data for display with safe access
     const structuredData = {
       // Payment/Order Details
-      paymentId: order.id,
-      orderId: order.receipt,
-      razorpayPaymentId: order.razorpayPaymentId || 'N/A',
-      razorpayOrderId: order.razorpayOrderId || 'N/A',
-      amount: session.totalCost || 0,
-      currency: "INR",
-      status: order.status || "success",
-      method: order.paymentMethod || "Razorpay",
-      timestamp: order.createdAt || new Date().toISOString(),
+      paymentId: order?.id || order?._id || 'N/A',
+      orderId: order?.receipt || 'N/A',
+      razorpayPaymentId: order?.razorpayPaymentId || 'N/A',
+      razorpayOrderId: order?.razorpayOrderId || order?.id || 'N/A',
+      amount: session?.totalCost || 0,
+      currency: order?.currency || "INR",
+      status: order?.status || session?.paymentStatus || "PAID",
+      method: order?.paymentMethod || "Razorpay",
+      timestamp: order?.createdAt || session?.endTime || new Date().toISOString(),
       
       // User Details
       user: {
-        name: user.name,
-        email: user.email,
-        phone: user.phone || 'N/A',
-        evModel: user.evModel || 'N/A',
-        roles :user.roles || 'N/A'
+        name: user?.name || 'N/A',
+        email: user?.email || 'N/A',
+        phone: user?.phone || 'N/A',
+        evModel: user?.evModel || 'N/A',
+        roles: user?.roles || 'N/A'
       },
       
       // Station Details (from host's evStation)
       station: {
-        name: host.evStation?.name || 'N/A',
-        address: host.evStation?.address || 'N/A',
-        power: session?.chargerType || 'N/A',
-        priceperunit:host.evStation?.chargingPricePerUnit || 'N/A',
-        connectorType: session?.connectorType || 'Type 2',
+        name: host?.evStation?.name || 'Charging Station',
+        address: host?.evStation?.address || 'N/A',
+        power: host?.evStation?.power || session?.chargerType || 'N/A',
+        priceperunit: session?.pricePerUnit || host?.evStation?.chargingPricePerUnit || 0,
+        connectorType: host?.evStation?.connectorType || session?.connectorType || 'Type 2',
         chargerNumber: session?.chargerNumber || 'N/A',
-        availableChargers: host.evStation?.availableChargers || 0
+        availableChargers: host?.evStation?.availableChargers || 0
       },
       
       // Host Details
       host: {
-        name: host.name,
-        email: host.email,
-        phone: host.phone || 'N/A',
-        gstNumber: host.gstNumber || 'N/A'
+        name: host?.name || 'N/A',
+        email: host?.email || 'N/A',
+        phone: host?.phone || 'N/A',
+        gstNumber: host?.gstNumber || 'N/A'
       },
       
       // Charging Session Details
       charging: {
-        duration: calculateDuration(session.startTime, session.endTime),
-        energyConsumed: `${session.energyConsumed || 0} kWh`,
-        startTime: formatTime(session.startTime),
-        endTime: formatTime(session.endTime),
-        ratePerUnit: `₹${session.totalCost || 0}/perunit`,
-        date: formatDate(session.startTime || new Date())
+        duration: calculateDuration(session?.startTime, session?.endTime),
+        durationMinutes: session?.durationInMinutes || 0,
+        energyConsumed: `${(session?.energyConsumed || 0).toFixed(2)} kWh`,
+        startTime: formatTime(session?.startTime),
+        endTime: formatTime(session?.endTime),
+        ratePerUnit: `₹${session?.pricePerUnit || host?.evStation?.chargingPricePerUnit || 0}/kWh`,
+        date: formatDate(session?.startTime || session?.createdAt || new Date())
       }
     };
 
@@ -121,7 +124,7 @@ function PaymentSuccess() {
       const token = localStorage.getItem('token');
       
       // Call your backend API to generate invoice
-      const res = await axios.get(
+      const res = await api.get(
         `http://localhost:5000/api/payment/invoice/${paymentData.paymentId}`,
         {
           headers: {
@@ -143,7 +146,7 @@ function PaymentSuccess() {
       setIsGeneratingInvoice(false);
     } catch (error) {
       console.error('Error downloading invoice:', error);
-      alert('Failed to download invoice. Using browser print instead...');
+      toast.error('Failed to download invoice. Using browser print instead...');
       window.print(); // Fallback to browser print
       setIsGeneratingInvoice(false);
     }

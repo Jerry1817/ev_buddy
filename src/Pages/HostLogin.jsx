@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import toast, { Toaster } from 'react-hot-toast';
 
 function HostLogin() {
   const navigate = useNavigate();
@@ -12,13 +13,13 @@ function HostLogin() {
 
   const [loading, setLoading] = useState(false);
 
-  /* 🔁 AUTO LOGIN CHECK */
+  /*  AUTO LOGIN CHECK */
   useEffect(() => {
-    const token = localStorage.getItem("hostToken");
+    const token = localStorage.getItem("hosttoken") || localStorage.getItem("token");
     const role = localStorage.getItem("role");
 
-    if (token && role === "host") {
-      navigate("/hostrequests"); // auto redirect
+    if (token && (role === "host" || role === "HOST")) {
+      navigate("/host/dashboard"); // auto redirect to dashboard
     }
   }, [navigate]); 
 
@@ -41,28 +42,34 @@ function HostLogin() {
       );
       
       console.log(res,"resssssssssss");
-      const { token, role } = res.data;
+      const { token, role, user } = res.data;
 
       // If not host
       if (role !== "HOST") {
-        alert("This account is not registered as a host");
+        toast.error("This account is not registered as a host");
         setLoading(false);
         return;
       }
 
-      // ✅ SAVE HOST TOKEN SAFELY
-      // localStorage.setItem("hostToken", token);
-      localStorage.setItem("role", role);
+      //  SAVE HOST TOKEN AND USER DATA (only hosttoken, role, user)
+
+      
       localStorage.setItem("hosttoken", token);
+      localStorage.setItem("role", role);
+      localStorage.setItem("host", JSON.stringify(user));
 
-
-      navigate("/hostrequests");
+      // Navigate to host dashboard
+      navigate("/host/dashboard");
     } catch (error) {
       console.error(error);
-      alert(
-        error.response?.data?.message ||
-          "Host login failed. Try again."
-      );
+      const errorMessage = error.response?.data?.message || "Host login failed. Try again.";
+      
+      // If blocked, show specific message
+      if (error.response?.data?.blocked) {
+        toast.error(errorMessage, { duration: 5000, icon: '🚫' });
+      } else {
+        toast.error(errorMessage);
+      }
     } finally {
       setLoading(false);
     }
@@ -70,6 +77,7 @@ function HostLogin() {
 
   return (
     <div className="min-h-screen flex justify-center items-center bg-slate-100 px-4">
+      <Toaster position="top-center" />
       <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
         <h2 className="text-center text-3xl font-semibold text-gray-800 mb-6">
           Host Login

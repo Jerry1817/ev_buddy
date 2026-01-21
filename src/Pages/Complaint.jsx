@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 import { 
   ArrowLeft, 
   AlertCircle, 
@@ -93,7 +94,7 @@ const PRIORITY_MAP = {
   const handleImageUpload = (e) => {
     const files = Array.from(e.target.files);
     if (images.length + files.length > 3) {
-      alert('Maximum 3 images allowed');
+      toast.error('Maximum 3 images allowed');
       return;
     }
     setImages([...images, ...files.slice(0, 3 - images.length)]);
@@ -105,7 +106,7 @@ const PRIORITY_MAP = {
 
 const handleSubmit = async () => {
   try {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("userToken");
     setIsSubmitting(true);
 
     const formData = new FormData();
@@ -136,7 +137,7 @@ const handleSubmit = async () => {
 
     setSubmitted(true);
   } catch (err) {
-    alert(err.message);
+    toast.error(err.message);
   } finally {
     setIsSubmitting(false);
   }

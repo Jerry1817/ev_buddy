@@ -13,7 +13,7 @@ import {
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
-import axios from "axios";
+import api from "@/utils/api";
 import { User } from "lucide-react";
 import Header from "@/components/Header";
 
@@ -21,7 +21,7 @@ function Home() {
   const navigate = useNavigate();
   const state = useLocation();
 
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("userToken");
   const userName = token
     ? state.state?.name || localStorage.getItem("userName")
     : null;
@@ -33,23 +33,17 @@ function Home() {
   const [isLoggedIn, setIsLoggedIn] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("userToken");
     console.log(token, "token");
     if (!token) return;
 
     const fetchStats = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/auth/homestats", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const res = await api.get("http://localhost:5000/api/auth/homestats");
         localStorage.setItem("userName", state.state?.name);
-
-        const result = await res.json();
-        setStatsData(result.data);
+        setStatsData(res.data.data);
       } catch (err) {
-        setError("Failed to load stats");
+        console.log(err);
       }
     };
 
@@ -57,7 +51,7 @@ function Home() {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
+    localStorage.removeItem("userToken");
     setIsLoggedIn(false);
   };
 

@@ -21,7 +21,7 @@ function AddReview() {
 
   useEffect(() => {
     if (!stationData) {
-      alert("No station data found. Redirecting back...");
+      toast.error("No station data found. Redirecting back...");
       navigate(-1);
     }
   }, [stationData, navigate]);
@@ -81,7 +81,7 @@ function AddReview() {
 
 
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("userToken");
 
       if (!token) {
        toast.error("Please login to submit a review", {

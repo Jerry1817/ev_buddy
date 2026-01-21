@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../utils/api";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 function UserRequests() {
   const navigate = useNavigate();
@@ -17,16 +18,16 @@ function UserRequests() {
     setLoading(true);
 
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("userToken");
 
       if (!token) {
-        alert("Login required");
+        toast.error("Login required");
         setLoading(false);
         navigate("/");
         return;
       }
 
-      const res = await axios.get(
+      const res = await api.get(
         "http://localhost:5000/api/auth/viewrequests",
         {
           headers: {
@@ -38,7 +39,7 @@ function UserRequests() {
       setRequests(res.data.data);
     } catch (error) {
       console.error(error);
-      alert("Failed to load requests");
+      toast.error("Failed to load requests");
     } finally {
       setLoading(false);
     }
@@ -48,10 +49,10 @@ function UserRequests() {
 
   const markArrived = async (requestId) => {
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("userToken");
 
-      await axios.patch(
-        `http://localhost:5000/api/charging/arrived/${requestId}`,
+      await api.patch(
+        `http://localhost:5000/api/auth/charging/arrived/${requestId}`,
         {},
         {
           headers: {
@@ -62,7 +63,7 @@ function UserRequests() {
 
       fetchMyRequests();
     } catch (err) {
-      alert("Failed to mark arrival");
+      toast.error("Failed to mark arrival");
     }
   };
 
@@ -72,6 +73,12 @@ function UserRequests() {
         return "bg-orange-100 text-orange-700 border-orange-200";
       case "ACCEPTED":
         return "bg-green-100 text-green-700 border-green-200";
+      case "ARRIVED":
+        return "bg-blue-100 text-blue-700 border-blue-200";
+      case "ACTIVE":
+        return "bg-purple-100 text-purple-700 border-purple-200";
+      case "COMPLETED":
+        return "bg-emerald-100 text-emerald-700 border-emerald-200";
       case "REJECTED":
         return "bg-red-100 text-red-700 border-red-200";
       default:
@@ -105,19 +112,39 @@ function UserRequests() {
   const filterOptions = [
     { value: "all", label: "All", count: requests.length },
     {
-      value: "pending",
+      value: "REQUESTED",
       label: "Pending",
       count: requests.filter((r) => r.status === "REQUESTED").length,
     },
     {
-      value: "accepted",
+      value: "ACCEPTED",
       label: "Accepted",
       count: requests.filter((r) => r.status === "ACCEPTED").length,
     },
     {
-      value: "rejected",
+      value: "ARRIVED",
+      label: "Arrived",
+      count: requests.filter((r) => r.status === "ARRIVED").length,
+    },
+    {
+      value: "ACTIVE",
+      label: "Charging",
+      count: requests.filter((r) => r.status === "ACTIVE").length,
+    },
+    {
+      value: "COMPLETED",
+      label: "Completed",
+      count: requests.filter((r) => r.status === "COMPLETED").length,
+    },
+    {
+      value: "REJECTED",
       label: "Rejected",
       count: requests.filter((r) => r.status === "REJECTED").length,
+    },
+    {
+      value: "EXPIRED",
+      label: "Expired",
+      count: requests.filter((r) => r.status === "EXPIRED").length,
     },
   ];
 
@@ -474,6 +501,12 @@ function UserRequests() {
                           ? "🕐"
                           : req.status === "ACCEPTED"
                           ? "✓"
+                          : req.status === "ARRIVED"
+                          ? "🚗"
+                          : req.status === "ACTIVE"
+                          ? "⚡"
+                          : req.status === "COMPLETED"
+                          ? "✅"
                           : "✗"}
                       </span>
                       <span
@@ -483,7 +516,7 @@ function UserRequests() {
                           textTransform: "capitalize",
                         }}
                       >
-                        {req.status}
+                        {req.status === "ACTIVE" ? "CHARGING" : req.status}
                       </span>
                     </div>
                   </div>
@@ -724,8 +757,7 @@ function UserRequests() {
                       </div>
                     </div>
                   )}
-                  {/* Charging Actions & Status */}
-                  {/* Accepted & not yet paid → show Start Charging */}
+                  {/* Accepted - Show arrive button */}
                   {req.status === "ACCEPTED" && (
                     <button
                       onClick={() => markArrived(req._id)}
@@ -742,8 +774,207 @@ function UserRequests() {
                         marginBottom: "16px",
                       }}
                     >
-                      🚗 I’ve Arrived
+                      🚗 I've Arrived
                     </button>
+                  )}
+
+                  {/* Arrived - Waiting for host to start */}
+                  {req.status === "ARRIVED" && (
+                    <div
+                      style={{
+                        background: "#dbeafe",
+                        border: "1px solid #bfdbfe",
+                        borderRadius: "12px",
+                        padding: "16px",
+                        marginBottom: "16px",
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "12px",
+                        }}
+                      >
+                        <div
+                          style={{
+                            width: "40px",
+                            height: "40px",
+                            background: "#3b82f6",
+                            borderRadius: "50%",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            animation: "pulse 2s infinite",
+                          }}
+                        >
+                          <span style={{ fontSize: "20px" }}>🔌</span>
+                        </div>
+                        <div>
+                          <p
+                            style={{
+                              fontSize: "14px",
+                              fontWeight: "600",
+                              color: "#1e40af",
+                              margin: 0,
+                            }}
+                          >
+                            Connect the charger to your EV
+                          </p>
+                          <p
+                            style={{
+                              fontSize: "13px",
+                              color: "#3b82f6",
+                              margin: "4px 0 0 0",
+                            }}
+                          >
+                            Waiting for host to start charging...
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Active - Charging in progress */}
+                  {req.status === "ACTIVE" && (
+                    <div
+                      style={{
+                        background: "linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%)",
+                        border: "2px solid #c084fc",
+                        borderRadius: "16px",
+                        padding: "20px",
+                        marginBottom: "16px",
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "12px",
+                          marginBottom: "12px",
+                        }}
+                      >
+                        <span
+                          style={{
+                            fontSize: "32px",
+                            animation: "pulse 1s infinite",
+                          }}
+                        >
+                          ⚡
+                        </span>
+                        <div>
+                          <p
+                            style={{
+                              fontSize: "18px",
+                              fontWeight: "700",
+                              color: "#7c3aed",
+                              margin: 0,
+                            }}
+                          >
+                            Charging in Progress
+                          </p>
+                          <p
+                            style={{
+                              fontSize: "13px",
+                              color: "#8b5cf6",
+                              margin: "4px 0 0 0",
+                            }}
+                          >
+                            Started at: {req.startedAt ? new Date(req.startedAt).toLocaleTimeString() : "--:--"}
+                          </p>
+                        </div>
+                      </div>
+                      <div
+                        style={{
+                          background: "rgba(255,255,255,0.7)",
+                          borderRadius: "8px",
+                          padding: "12px",
+                        }}
+                      >
+                        <p
+                          style={{
+                            fontSize: "12px",
+                            color: "#6b21a8",
+                            margin: 0,
+                            textAlign: "center",
+                          }}
+                        >
+                          Please wait while your EV charges. The host will stop charging when complete.
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Completed - Show payment/review */}
+                  {req.status === "COMPLETED" && req.paymentStatus !== "PAID" && (
+                    <div style={{ marginBottom: "16px" }}>
+                      <div
+                        style={{
+                          background: "#ecfdf5",
+                          border: "1px solid #a7f3d0",
+                          borderRadius: "12px",
+                          padding: "16px",
+                          marginBottom: "12px",
+                        }}
+                      >
+                        <p
+                          style={{
+                            fontSize: "16px",
+                            fontWeight: "600",
+                            color: "#065f46",
+                            margin: "0 0 8px 0",
+                          }}
+                        >
+                          ✅ Charging Completed!
+                        </p>
+                        <div
+                          style={{
+                            display: "grid",
+                            gridTemplateColumns: "1fr 1fr",
+                            gap: "8px",
+                          }}
+                        >
+                          <div>
+                            <p style={{ fontSize: "12px", color: "#047857", margin: 0 }}>Duration</p>
+                            <p style={{ fontSize: "16px", fontWeight: "600", color: "#064e3b", margin: 0 }}>
+                              {req.totalDuration || "--"} mins
+                            </p>
+                          </div>
+                          <div>
+                            <p style={{ fontSize: "12px", color: "#047857", margin: 0 }}>Total Cost</p>
+                            <p style={{ fontSize: "16px", fontWeight: "600", color: "#064e3b", margin: 0 }}>
+                              ₹{req.totalCost || "--"}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() =>
+                          navigate(`/payment/${req._id}`, {
+                            state: {
+                              requestId: req._id,
+                              totalCost: req.totalCost,
+                              stationData: req.host?.evStation,
+                            },
+                          })
+                        }
+                        style={{
+                          width: "100%",
+                          background:
+                            "linear-gradient(135deg, #059669 0%, #047857 100%)",
+                          color: "white",
+                          border: "none",
+                          padding: "14px",
+                          borderRadius: "12px",
+                          fontWeight: "600",
+                          cursor: "pointer",
+                          boxShadow: "0 4px 12px rgba(5,150,105,0.3)",
+                          transition: "all 0.2s",
+                        }}
+                      >
+                        💳 Proceed to Payment (₹{req.totalCost})
+                      </button>
+                    </div>
                   )}
 
                   {/* Charging completed & paid */}

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
-import axios from "axios";
+import api from "../utils/api";
+import toast from "react-hot-toast";
 
 function Charging() {
   const {state}=useLocation()
@@ -16,7 +17,7 @@ function Charging() {
   // Start charging API
   const startCharging = async () => {
     try {
-      const res = await axios.post(
+      const res = await api.post(
         "http://localhost:5000/api/auth/chargingstart",
         {
           requestId:state
@@ -25,7 +26,7 @@ function Charging() {
         },
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${localStorage.getItem("userToken")}`,
           },
         }
       );
@@ -33,7 +34,7 @@ function Charging() {
       setSessionId(res.data.data._id);
       setIsCharging(true);
     } catch (err) {
-      alert("Failed to start charging");
+      toast.error("Failed to start charging");
       console.error(err);
     }
   };
@@ -41,14 +42,14 @@ function Charging() {
   // Stop charging
 const stopCharging = async () => {
   try {
-    const res = await axios.post(
+    const res = await api.post(
       "http://localhost:5000/api/auth/chargingend",
       {
         sessionId,
       },
       {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${localStorage.getItem("userToken")}`,
         },
       }
     );
@@ -65,7 +66,7 @@ const stopCharging = async () => {
 
   } catch (err) {
     console.error(err);
-    alert("Failed to stop charging");
+    toast.error("Failed to stop charging");
   }
 };
 

@@ -1,10 +1,11 @@
 import React from "react";
 import { IoCallOutline, IoNavigateOutline } from "react-icons/io5";
+import toast from "react-hot-toast";
 import "../components/HostChargingSetup.css";
 
 const HostChargingSetup = () => {
   const handleConfirm = () => {
-    alert("Charging request confirmed ✅");
+    toast.success("Charging request confirmed ✅");
   };
 
   return (

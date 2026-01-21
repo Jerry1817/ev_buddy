@@ -318,7 +318,7 @@ function UserRegister() {
             <p className="text-slate-600">
               Already have an account?{" "}
               <a
-                href="/"
+                href="/Login"
                 className="text-emerald-600 font-semibold hover:text-emerald-700 hover:underline"
               >
                 Sign In

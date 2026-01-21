@@ -19,9 +19,14 @@ import {
   MessageSquare,
   X,
   Camera,
-  Save
+  Save,
+  ArrowLeft,
+  Star,
+  Car,
+  Receipt
 } from "lucide-react";
-import axios from "axios";
+import toast from "react-hot-toast";
+import api from "../utils/api";
 import { useNavigate } from "react-router-dom";
 
 export default function Profile() {
@@ -34,6 +39,10 @@ const navigate=useNavigate()
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("")
   const [isSaving, setIsSaving] = useState(false);
+  const [stats, setStats] = useState({
+    totalCharges: 0,
+    totalEnergy: 0,
+  });
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -41,7 +50,7 @@ const navigate=useNavigate()
     address: "",
     vehicleModel: "",
     vehicleReg: ""
-  }); 
+  });  
   
   console.log(user?.name,"user");
 
@@ -61,18 +70,33 @@ const navigate=useNavigate()
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const token = localStorage.getItem("token");
-        if (!token) return;
+        const token = localStorage.getItem("userToken");
+        if (!token) {
+          navigate("/login");
+          return;
+        }
         
-        const res = await axios.get("http://localhost:5000/api/auth/me", {
+        const res = await api.get("http://localhost:5000/api/auth/me", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
         
         setUser(res.data.data);
-      
+
+        // Fetch user stats
+        const statsRes = await api.get("http://localhost:5000/api/auth/homestats", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         
+        if (statsRes.data.success) {
+          setStats({
+            totalCharges: statsRes.data.data.usercharged || 0,
+            totalEnergy: Math.round((statsRes.data.data.usercharged || 0) * 15), // Approx 15 kWh per charge
+          });
+        }
       } catch (err) {
         setError(err.message);
       } finally {
@@ -81,7 +105,7 @@ const navigate=useNavigate()
     };
     
     fetchUser();
-  }, []);
+  }, [navigate]);
   
   
   if (loading) {
@@ -112,10 +136,49 @@ if (!user){
       setIsSaving(false);
       setIsEditModalOpen(false);
       // You can add toast notification here
-      alert("Profile updated successfully!");
+      toast.success("Profile updated successfully!");
     }, 1500);
   };
-  
+
+  // Logout handler - clears all localStorage and navigates to login
+  const handleLogout = () => {
+    localStorage.removeItem("userToken");
+    localStorage.removeItem("user");
+    localStorage.removeItem("hosttoken");
+    localStorage.removeItem("role");
+    localStorage.removeItem("userName");
+    navigate("/login");
+  };
+
+  // Image Upload Handler
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const uploadData = new FormData();
+    uploadData.append("image", file);
+
+    try {
+      const token = localStorage.getItem("userToken");
+      const res = await api.post("http://localhost:5000/api/auth/upload-avatar", uploadData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+           Authorization: `Bearer ${token}`
+        },
+      });
+
+      if (res.data.success) {
+        toast.success("Profile image updated!");
+        // Update local user state with new image path
+        // Ensure path starts with slash if not already or absolute URL
+        const imagePath = res.data.profileImage;
+        setUser((prev) => ({ ...prev, profileImage: imagePath }));
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to upload image");
+    }
+  };
   
   
   
@@ -256,6 +319,14 @@ if (!user){
       {/* Header with Profile */}
       <div className="bg-gradient-to-r from-emerald-500 to-emerald-600 px-6 pt-8 pb-24 animate-fade-in">
         <div className="max-w-4xl mx-auto">
+          {/* Back Button */}
+          <button
+            onClick={() => navigate(-1)}
+            className="flex items-center gap-2 text-white/80 hover:text-white mb-4 transition-colors"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            <span className="text-sm font-medium">Back</span>
+          </button>
           {/* Top Actions */}
           {/* <div className="flex justify-between items-center mb-8">
             <button className="p-2 bg-white/20 backdrop-blur-sm rounded-xl text-white hover:bg-white/30 transition-all">
@@ -273,7 +344,7 @@ if (!user){
             <div className="relative">
               <div className="w-24 h-24 md:w-28 md:h-28 rounded-full bg-white p-1 shadow-xl">
                 <img
-                  src="https://via.placeholder.com/120"
+                  src={user.profileImage ? `http://localhost:5000${user.profileImage}` : "https://via.placeholder.com/120"}
                   alt="Profile"
                   className="w-full h-full rounded-full object-cover"
                 />
@@ -326,9 +397,9 @@ if (!user){
               <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
                 <Zap className="w-6 h-6 text-white" />
               </div>
-              <span className="text-xs text-slate-500 font-medium">This Month</span>
+              <span className="text-xs text-slate-500 font-medium">Completed</span>
             </div>
-            <p className="text-2xl font-bold text-slate-900 mb-1">24</p>
+            <p className="text-2xl font-bold text-slate-900 mb-1">{stats.totalCharges}</p>
             <p className="text-sm text-slate-600">Total Charges</p>
           </div>
 
@@ -338,76 +409,51 @@ if (!user){
               <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center">
                 <Activity className="w-6 h-6 text-white" />
               </div>
-              <span className="text-xs text-slate-500 font-medium">Total</span>
+              <span className="text-xs text-slate-500 font-medium">Estimated</span>
             </div>
-            <p className="text-2xl font-bold text-slate-900 mb-1">342 kWh</p>
+            <p className="text-2xl font-bold text-slate-900 mb-1">{stats.totalEnergy} kWh</p>
             <p className="text-sm text-slate-600">Energy Used</p>
           </div>
 
-          {/* Money Saved */}
+          {/* Average Rating */}
           <div className="stat-card">
             <div className="flex items-center justify-between mb-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center">
-                <Wallet className="w-6 h-6 text-white" />
+              <div className="w-12 h-12 bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl flex items-center justify-center">
+                <Star className="w-6 h-6 text-white" />
               </div>
-              <span className="text-xs text-slate-500 font-medium">vs Petrol</span>
+              <span className="text-xs text-slate-500 font-medium">Rating</span>
             </div>
-            <p className="text-2xl font-bold text-slate-900 mb-1">₹4,580</p>
-            <p className="text-sm text-slate-600">Money Saved</p>
+            <p className="text-2xl font-bold text-slate-900 mb-1">
+              {user.averageRating ? user.averageRating.toFixed(1) : "N/A"}
+            </p>
+            <p className="text-sm text-slate-600">Average Rating</p>
           </div>
         </div>
       </div>
 
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-6 pb-24">
-        {/* My EV Section */}
-        <div className="mb-6 animate-slide-up">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-bold text-slate-900">My Electric Vehicle</h2>
-            <button className="text-emerald-600 text-sm font-semibold hover:text-emerald-700 flex items-center gap-1">
-              Add Vehicle
-              <ChevronRight className="w-4 h-4" />
-            </button>
-          </div>
-
-          <div className="profile-card bg-white rounded-2xl p-5 border border-slate-200 shadow-lg">
-            <div className="flex items-center gap-4">
-              <div className="w-20 h-20 bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-xl flex items-center justify-center">
-                <img
-                  src="https://cdn.pixabay.com/photo/2021/05/20/12/23/electric-scooter-6267250_1280.png"
-                  alt="EV"
-                  className="w-16 h-16 object-contain"
-                />
-              </div>
-              <div className="flex-1">
-                <p className="text-xs text-emerald-600 font-semibold mb-1">ELECTRIC SCOOTER</p>
-                <h3 className="text-lg font-bold text-slate-900 mb-1">ATHER 450 Apex</h3>
-                <p className="text-sm text-slate-500">Reg: KL-XX-XXXX</p>
-              </div>
-              <ChevronRight className="w-5 h-5 text-slate-400" />
+        {/* My EV Section - Only show if user has evModel */}
+        {user.evModel && (
+          <div className="mb-6 animate-slide-up">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-bold text-slate-900">My Electric Vehicle</h2>
             </div>
-          </div>
-        </div>
 
-        {/* Wallet Section */}
-        <div className="mb-6 animate-slide-up">
-          <div className="profile-card bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-2xl p-6 border border-emerald-400 shadow-lg">
-            <div className="flex items-center justify-between">
+            <div className="profile-card bg-white rounded-2xl p-5 border border-slate-200 shadow-lg">
               <div className="flex items-center gap-4">
-                <div className="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
-                  <Wallet className="w-7 h-7 text-white" />
+                <div className="w-20 h-20 bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-xl flex items-center justify-center">
+                  <Car className="w-10 h-10 text-emerald-600" />
                 </div>
-                <div>
-                  <p className="text-emerald-100 text-sm mb-1">Wallet Balance</p>
-                  <p className="text-3xl font-bold text-white">₹0.00</p>
+                <div className="flex-1">
+                  <p className="text-xs text-emerald-600 font-semibold mb-1">ELECTRIC VEHICLE</p>
+                  <h3 className="text-lg font-bold text-slate-900 mb-1">{user.evModel}</h3>
                 </div>
+                <ChevronRight className="w-5 h-5 text-slate-400" />
               </div>
-              <button className="bg-white text-emerald-600 px-5 py-2.5 rounded-xl font-semibold hover:bg-emerald-50 transition-all shadow-lg">
-                Add Money
-              </button>
             </div>
           </div>
-        </div>
+        )}
 
         {/* Menu Items */}
         <div className="mb-6 animate-slide-up">
@@ -428,6 +474,21 @@ if (!user){
               <ChevronRight className="w-5 h-5 text-slate-400" />
             </div>
 
+            {/* Transaction History */}
+            <div onClick={() => navigate("/transactions")}
+              className="menu-item bg-white rounded-xl p-4 border border-slate-200 shadow-md cursor-pointer flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="icon-bg w-11 h-11 bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-xl flex items-center justify-center">
+                  <Receipt className="w-5 h-5 text-emerald-600" />
+                </div>
+                <div>
+                  <p className="font-semibold text-slate-900">Transaction History</p>
+                  <p className="text-xs text-slate-500">View past payments</p>
+                </div>
+              </div>
+              <ChevronRight className="w-5 h-5 text-slate-400" />
+            </div>
+
             {/* Submit Complaint */}
             <div    onClick={() => navigate("/complaints")}
              className="menu-item bg-white rounded-xl p-4 border border-slate-200 shadow-md cursor-pointer flex items-center justify-between">
@@ -442,21 +503,6 @@ if (!user){
               </div>
               <ChevronRight className="w-5 h-5 text-slate-400" />
             </div>
-
-            {/* Help & Support */}
-            {/* <div   onClick={() => navigate("/invite")}
-              className="menu-item bg-white rounded-xl p-4 border border-slate-200 shadow-md cursor-pointer flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="icon-bg w-11 h-11 bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl flex items-center justify-center">
-                  <HelpCircle className="w-5 h-5 text-purple-600" />
-                </div>
-                <div>
-                  <p className="font-semibold text-slate-900">Help & Support</p>
-                  <p className="text-xs text-slate-500">Get assistance</p>
-                </div>
-              </div>
-              <ChevronRight className="w-5 h-5 text-slate-400" />
-            </div> */}
 
             {/* Privacy Policy */}
             <div   onClick={() => navigate("/privacy")}
@@ -477,7 +523,10 @@ if (!user){
 
         {/* Logout Button */}
         <div className="animate-slide-up">
-          <button className="w-full bg-gradient-to-r from-red-500 to-red-600 text-white py-4 rounded-xl font-bold shadow-lg hover:from-red-600 hover:to-red-700 transition-all flex items-center justify-center gap-2">
+          <button 
+            onClick={handleLogout}
+            className="w-full bg-gradient-to-r from-red-500 to-red-600 text-white py-4 rounded-xl font-bold shadow-lg hover:from-red-600 hover:to-red-700 transition-all flex items-center justify-center gap-2"
+          >
             <LogOut className="w-5 h-5" />
             Logout
           </button>
@@ -514,14 +563,21 @@ if (!user){
                 <div className="relative inline-block">
                   <div className="w-24 h-24 rounded-full bg-slate-200 overflow-hidden">
                     <img
-                      src="https://via.placeholder.com/120"
+                      src={user.profileImage ? `http://localhost:5000${user.profileImage}` : "https://via.placeholder.com/120"}
                       alt="Profile"
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <button className="absolute bottom-0 right-0 w-8 h-8 bg-emerald-500 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-emerald-600 transition-all">
+                  <label htmlFor="file-upload" className="absolute bottom-0 right-0 w-8 h-8 bg-emerald-500 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-emerald-600 transition-all cursor-pointer">
                     <Camera className="w-4 h-4" />
-                  </button>
+                  </label>
+                  <input 
+                    id="file-upload" 
+                    type="file" 
+                    accept="image/*" 
+                    className="hidden" 
+                    onChange={handleImageUpload} 
+                  />
                 </div>
                 <p className="text-xs text-slate-500 mt-2">Click camera icon to change photo</p>
               </div>

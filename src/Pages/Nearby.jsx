@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
+import toast from "react-hot-toast";
 
 function Nearbylocation (){
   const [userLocation, setUserLocation] = useState(null);
@@ -10,7 +11,7 @@ function Nearbylocation (){
 
     const getUserLocation = () => {
       if (!navigator.geolocation) {
-        alert("Geolocation not supported");
+        toast.error("Geolocation not supported");
         return;
       }
     
@@ -22,7 +23,7 @@ function Nearbylocation (){
           });
         },
         () => {
-          alert("Location permission denied");
+          toast.error("Location permission denied");
         },
         {
     enableHighAccuracy: true,
