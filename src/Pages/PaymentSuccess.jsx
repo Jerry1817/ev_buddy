@@ -21,7 +21,7 @@ function PaymentSuccess() {
     // API response structure: { order, session, host, user }
     const { user = {}, host = {}, session = {}, order = {} } = state;
 
-    console.log("PaymentSuccess state:", state);
+    console.log("PaymentSuccess session:", session.durationInMinutes);
     
     // Structure the data for display with safe access
     const structuredData = {
@@ -121,7 +121,7 @@ function PaymentSuccess() {
     setIsGeneratingInvoice(true);
     
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('userToken');
       
       // Call your backend API to generate invoice
       const res = await api.get(
@@ -414,7 +414,7 @@ function PaymentSuccess() {
             <div className="grid md:grid-cols-3 gap-4">
               <div className="bg-teal-50 rounded-xl p-4">
                 <p className="text-xs text-slate-600 mb-1">Duration</p>
-                <p className="text-2xl font-bold text-teal-600">{paymentData.charging.duration}</p>
+                <p className="text-2xl font-bold text-teal-600">{paymentData.charging.durationMinutes} Minutes</p>
               </div>
               <div className="bg-teal-50 rounded-xl p-4">
                 <p className="text-xs text-slate-600 mb-1">Energy Consumed</p>

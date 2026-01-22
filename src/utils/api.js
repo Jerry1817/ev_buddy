@@ -7,6 +7,11 @@ const api = axios.create();
 // Request interceptor - add auth token based on current role
 api.interceptors.request.use(
   (config) => {
+    // If Authorization is already set (eg: manually in the request), don't overwrite it
+    if (config.headers.Authorization) {
+      return config;
+    }
+
     // Get current role to determine which token to use
     const role = localStorage.getItem('role');
     

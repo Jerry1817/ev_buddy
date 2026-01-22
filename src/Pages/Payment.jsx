@@ -1,7 +1,7 @@
 import { useState } from "react";
 import api from "../utils/api";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { Zap, CreditCard, Clock, MapPin, User } from "lucide-react";
+import { Zap, CreditCard, Clock, MapPin, User, ArrowLeft, CheckCircle2, Battery } from "lucide-react";
 import toast from "react-hot-toast";
 
 function Payment() {
@@ -25,18 +25,25 @@ function Payment() {
     );
   }
 
-  // Extract payment data from state
+  // Extract payment data from state with robust fallbacks
   const { 
     session, 
-    duration = 0, 
-    totalCost = 0, 
-    requestId,
-    energyConsumed = 0,
-    pricePerUnit = 0,
     stationData = {}
   } = state;
 
+  // Use explicit fallbacks for all important fields
+  const requestId = state.requestId;
+  const totalCost = state.totalCost || 0;
+  const duration = state.duration || state.durationInMinutes || state.totalDuration || 0;
+  const pricePerUnit = state.pricePerUnit || state.chargingPricePerUnit || stationData.chargingPricePerUnit || 0;
+  
+  // Calculate energy if missing (duration in mins, power in kW)
+  // Formula: kWh = (mins / 60) * power
+  const energyConsumed = Number(state.energyConsumed || (duration / 60) * (stationData.power || 30)) || 0;
+  const displayCost = Number(totalCost) || 0;
+
   console.log("Payment State:", state);
+  console.log("Extracted Data:", { duration, totalCost: displayCost, energyConsumed, pricePerUnit });
 
   const handlePayment = async () => {
     setIsProcessing(true);
@@ -163,7 +170,7 @@ function Payment() {
         {/* Charging Summary Card */}
         <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100 mb-4">
           <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-            <CheckCircle className="w-5 h-5 text-emerald-500" />
+            <CheckCircle2 className="w-5 h-5 text-emerald-500" />
             Charging Summary
           </h2>
 
@@ -187,7 +194,7 @@ function Payment() {
                 </div>
                 <span className="text-slate-600">Energy Consumed</span>
               </div>
-              <span className="font-semibold text-slate-900">{energyConsumed.toFixed(2)} kWh</span>
+              <span className="font-semibold text-slate-900">{(Number(energyConsumed) || 0).toFixed(2)} kWh</span>
             </div>
 
             {/* Price per Unit */}
@@ -206,7 +213,7 @@ function Payment() {
           <div className="mt-6 pt-4 border-t-2 border-emerald-100">
             <div className="flex items-center justify-between">
               <span className="text-lg font-bold text-slate-900">Total Amount</span>
-              <span className="text-2xl font-bold text-emerald-600">₹{totalCost.toFixed(2)}</span>
+              <span className="text-2xl font-bold text-emerald-600">₹{(Number(displayCost) || 0).toFixed(2)}</span>
             </div>
           </div>
         </div>
@@ -225,7 +232,7 @@ function Payment() {
           ) : (
             <>
               <CreditCard className="w-5 h-5" />
-              Pay ₹{totalCost.toFixed(2)}
+              Pay ₹{(Number(displayCost) || 0).toFixed(2)}
             </>
           )}
         </button>

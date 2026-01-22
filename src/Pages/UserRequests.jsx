@@ -19,6 +19,7 @@ function UserRequests() {
 
     try {
       const token = localStorage.getItem("userToken");
+      
 
       if (!token) {
         toast.error("Login required");
@@ -99,9 +100,13 @@ function UserRequests() {
   };
 
   const statusMap = {
-    pending: "REQUESTED",
-    accepted: "ACCEPTED",
-    rejected: "REJECTED",
+    REQUESTED: "REQUESTED",
+    ACCEPTED: "ACCEPTED",
+    REJECTED: "REJECTED",
+    ARRIVED: "ARRIVED",
+    ACTIVE: "ACTIVE",
+    COMPLETED: "COMPLETED",
+    EXPIRED: "EXPIRED"
   };
 
   const filteredRequests = requests.filter((req) => {
@@ -949,15 +954,19 @@ function UserRequests() {
                         </div>
                       </div>
                       <button
-                        onClick={() =>
+                        onClick={() => {
+                          console.log("Navigating with request data:", req);
                           navigate(`/payment/${req._id}`, {
                             state: {
                               requestId: req._id,
                               totalCost: req.totalCost,
+                              duration:req.totalDuration ,
+                              energyConsumed: req.energyConsumed,
+                              pricePerUnit: req.pricePerUnit ,
                               stationData: req.host?.evStation,
                             },
-                          })
-                        }
+                          });
+                        }}
                         style={{
                           width: "100%",
                           background:
