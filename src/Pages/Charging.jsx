@@ -59,6 +59,8 @@ const stopCharging = async () => {
           session: res.data.data.sessionId,
           duration: res.data.data.durationInMinutes,
           totalCost: res.data.data.totalCost,
+          energyConsumed: res.data.data.energyConsumed,
+          pricePerUnit: res.data.data.pricePerUnit,
         },
       });
 
