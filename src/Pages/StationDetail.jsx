@@ -257,15 +257,6 @@ function StationDetail() {
         </div>
       </div>
 
-      {/* Debug Info (Remove in production) */}
-      <div className="mt-4 mb-24 text-xs text-slate-400 text-center">
-        <details className="max-w-2xl mx-auto">
-          <summary className="cursor-pointer">Debug: View Raw Data</summary>
-          <pre className="mt-2 bg-slate-100 p-4 rounded text-left overflow-auto">
-            {JSON.stringify(station, null, 2)}
-          </pre>
-        </details>
-      </div>
     </div>
   );
 }

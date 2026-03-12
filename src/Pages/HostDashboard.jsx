@@ -233,36 +233,6 @@ export default function HostDashboard() {
             </div>
           </div>
         </div>
-
-        {/* Station Info */}
-        <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-bold text-slate-900">Station Info</h2>
-            <button
-              onClick={() => navigate("/host/settings")}
-              className="text-emerald-600 text-sm font-medium flex items-center gap-1 hover:text-emerald-700"
-            >
-              Edit
-              <ChevronRight className="w-4 h-4" />
-            </button>
-          </div>
-          <div className="space-y-3">
-            <div className="flex justify-between">
-              <span className="text-slate-500">Station Name</span>
-              <span className="font-medium text-slate-900">{stationName}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-slate-500">Price per kWh</span>
-              <span className="font-medium text-emerald-600">₹{pricePerUnit}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-slate-500">Available Chargers</span>
-              <span className="font-medium text-slate-900">
-                {user?.evStation?.availableChargers || 0}
-              </span>
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* Recent Requests */}
