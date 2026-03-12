@@ -66,11 +66,6 @@ export default function HostLayout({ children }) {
       path: "/host/earnings",
       icon: TrendingUp,
     },
-    {
-      name: "Station Settings",
-      path: "/host/settings",
-      icon: Settings,
-    },
   ];
 
   const isActive = (path) => location.pathname === path;

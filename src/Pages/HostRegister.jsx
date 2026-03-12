@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import MapPicker from "../components/MapPicker";
-import toast from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import { 
   Zap, 
   MapPin, 
@@ -23,9 +23,13 @@ function HostRegister() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   // Check if user is already logged in
-  const existingToken = localStorage.getItem("token");
-  const existingUser = JSON.parse(localStorage.getItem("user") || "{}");
-  const isLoggedIn = !!existingToken && !!existingUser?.name;
+  const getInitialLoginState = () => {
+    const token = localStorage.getItem("hosttoken") || localStorage.getItem("userToken") || localStorage.getItem("token");
+    const user = JSON.parse(localStorage.getItem("host") || localStorage.getItem("user") || "{}");
+    return { isLoggedIn: !!token && !!user?.name, user };
+  };
+
+  const { isLoggedIn, user: existingUser } = getInitialLoginState();
   
   // If already logged in, start at step 2 (Station Details), otherwise step 1
   const [step, setStep] = useState(isLoggedIn ? 2 : 1);
@@ -74,7 +78,7 @@ function HostRegister() {
     }
 
     setIsSubmitting(true);
-    let token = localStorage.getItem("token");
+    let token = localStorage.getItem("hosttoken") || localStorage.getItem("userToken") || localStorage.getItem("token");
 
     try {
       // If already logged in as driver, use existing token
@@ -100,7 +104,7 @@ function HostRegister() {
           token = loginRes.data.token;
         } catch (error) {
           // If user already exists → login directly
-          if (error.response?.data?.message?.includes("already exists")) {
+          if (error.response?.status === 409 || error.response?.data?.message?.toLowerCase().includes("already exists")) {
             const loginRes = await axios.post(
               "http://localhost:5000/api/auth/login",
               {
@@ -136,11 +140,18 @@ function HostRegister() {
         }
       );
 
-      localStorage.setItem("token", token);
-      localStorage.setItem("role", "host");
+      localStorage.setItem("hosttoken", token);
+      localStorage.setItem("role", "HOST");
+      
+      // Fetch user data again to get the updated host info with station
+      const userRes = await axios.get("http://localhost:5000/api/auth/profile", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      localStorage.setItem("host", JSON.stringify(userRes.data));
+      localStorage.setItem("user", JSON.stringify(userRes.data)); // For layouts that use 'user' key
 
       toast.success("🎉 Station registered successfully! Welcome to EV Buddy Host Network!");
-      navigate("/hostrequests");
+      navigate("/host/dashboard");
     } catch (err) {
       console.error("Registration error:", err);
       toast.error(err.response?.data?.message || "Registration failed. Please try again.");
@@ -176,6 +187,7 @@ function HostRegister() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50 py-8 px-4">
+      <Toaster position="top-center" />
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
@@ -232,6 +244,7 @@ function HostRegister() {
                     onChange={handleChange} 
                     className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
                     required 
+                    autoComplete="name"
                   />
                 </div>
 
@@ -245,6 +258,7 @@ function HostRegister() {
                     onChange={handleChange} 
                     className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
                     required 
+                    autoComplete="email"
                   />
                 </div>
 
@@ -258,6 +272,7 @@ function HostRegister() {
                     onChange={handleChange} 
                     className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
                     required 
+                    autoComplete="tel"
                   />
                 </div>
 
@@ -271,6 +286,7 @@ function HostRegister() {
                     onChange={handleChange} 
                     className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
                     required 
+                    autoComplete="new-password"
                   />
                 </div>
 
@@ -314,6 +330,7 @@ function HostRegister() {
                     onChange={handleChange} 
                     className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
                     required 
+                    autoComplete="organization"
                   />
                 </div>
 
@@ -327,6 +344,7 @@ function HostRegister() {
                     onChange={handleChange} 
                     className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
                     required 
+                    autoComplete="street-address"
                   />
                 </div>
 

@@ -7,7 +7,6 @@ import Register from "./Pages/Register";
 import UserRegister from "./Pages/UserRegister";
 import HostRegister from "./Pages/HostRegister";
 import Profile from "./Pages/Profile";
-import HostChargingSetup from "./Pages/HostChargingSetup";
 import HostRequests from "./Pages/HostRequests";
 import HostAccepted from "./Pages/HostAccepted";
 import HelpSupport from "./Pages/Help";
@@ -22,7 +21,7 @@ import UserRequests from "./Pages/UserRequests";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminProtectedRoute from "./components/AdminProtectedRoute";
 import UserLayout from "./components/UserLayout";
-import StationDetail from "./Pages/StationDetail"; // ✅ FIXED PATH
+import StationDetail from "./Pages/StationDetail"; //  FIXED PATH
 import HostLogin from "./Pages/HostLogin";
 import AdminLogin from "./Pages/AdminLogin";
 import Nearbylocation from "./Pages/Nearby";
@@ -184,15 +183,6 @@ function App() {
       <Route
         path="/hostregister"
         element={<HostRegister />}
-      />
-
-      <Route
-        path="/hostcharging"
-        element={
-          <ProtectedRoute>
-            <HostChargingSetup />
-          </ProtectedRoute>
-        }
       />
 
 
